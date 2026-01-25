@@ -14,6 +14,7 @@
 - Simple gameplay avoids scope creep
 - Loading screen demonstrates asset system
 - Pause menu shows scene stacking
+- **Use ObjectPool for enemies and bullets** to demonstrate proper pooling pattern
 
 ## Requirements
 
@@ -56,7 +57,8 @@ demo/
 - `src/demo/scenes/game-scene.ts` - Gameplay (~120 lines)
 - `src/demo/scenes/pause-scene.ts` - Pause overlay (~60 lines)
 - `src/demo/objects/player.ts` - Player class (~80 lines)
-- `src/demo/objects/enemy.ts` - Enemy class (~60 lines)
+- `src/demo/objects/enemy.ts` - Enemy class with reset() (~70 lines)
+- `src/demo/objects/bullet.ts` - Bullet class with reset() (~50 lines)
 - `src/demo/components/movement.ts` - Movement component (~50 lines)
 
 ### Create Assets
@@ -91,6 +93,8 @@ demo/
 
 5. Create `src/demo/scenes/game-scene.ts`:
    - Create player at center
+   - **Use ObjectPool for enemies** (acquire on spawn, release on destroy)
+   - **Use ObjectPool for bullets** (acquire on shoot, release on hit/exit)
    - Spawn enemies periodically
    - Handle collisions (simple AABB)
    - Score display
@@ -111,17 +115,24 @@ demo/
 8. Create `src/demo/objects/enemy.ts`:
    - Extend GameObject
    - Simple downward movement
-   - Destroy on hit or exit screen
+   - **reset() method for pool reuse**
+   - Release to pool on hit or exit screen
 
-9. Create `src/demo/components/movement.ts`:
+9. Create `src/demo/objects/bullet.ts`:
+   - Extend GameObject
+   - Upward movement
+   - **reset() method for pool reuse**
+   - Release to pool on hit or exit screen
+
+10. Create `src/demo/components/movement.ts`:
    - Component for velocity-based movement
    - update() applies velocity
 
-10. Create placeholder assets:
+11. Create placeholder assets:
     - Simple colored squares for sprites
     - Free sound effects
 
-11. Update main.ts:
+12. Update main.ts:
     - Import and run demo
 
 ## Todo List
@@ -133,7 +144,9 @@ demo/
 - [ ] Create game-scene.ts
 - [ ] Create pause-scene.ts
 - [ ] Create player.ts
-- [ ] Create enemy.ts
+- [ ] Create enemy.ts with reset()
+- [ ] Create bullet.ts with reset()
+- [ ] Setup ObjectPool for enemies and bullets
 - [ ] Create movement.ts
 - [ ] Create/add placeholder assets
 - [ ] Test loading flow
@@ -149,6 +162,8 @@ demo/
 - Menu button animates and responds
 - Player moves with keyboard/touch
 - Enemies spawn and move
+- **Bullets fire and pool correctly**
+- **ObjectPool reuses enemies/bullets** (no GC spikes)
 - Pause overlay works via scene stack
 - Audio plays without issues
 - No errors in console

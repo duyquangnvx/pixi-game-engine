@@ -9,6 +9,7 @@
 - **Priority**: High
 - **Status**: Pending
 - **Description**: GSAP helpers + Spine integration for animations
+- **Note**: Spine is **optional** - include but don't require. Demo uses simple sprites.
 
 ## Key Insights
 - GSAP PixiPlugin simplifies property animation
@@ -80,8 +81,9 @@ SpineManager (thin wrapper)
    - pauseAll(): gsap.globalTimeline.pause()
    - resumeAll(): gsap.globalTimeline.resume()
 
-3. Create `src/animation/spine-manager.ts`:
+3. Create `src/animation/spine-manager.ts` (optional - only if Spine is installed):
    - Import Spine from @esotericsoftware/spine-pixi-v7
+   - Gracefully handle missing dependency
    - create(skeletonAlias, atlasAlias): Spine
      - Load skeleton and atlas from Assets
      - Return configured Spine instance

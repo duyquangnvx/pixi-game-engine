@@ -67,7 +67,7 @@ Uses existing ecosystem libraries where possible, custom implementations only wh
 | 7 | [Animation System](./phase-07-animation-system.md) | Pending | 2 |
 | 8 | [Game Objects](./phase-08-game-objects.md) | Pending | 3 |
 | 9 | [Utilities](./phase-09-utilities.md) | Pending | 3 |
-| 10 | [Demo Example](./phase-10-demo-example.md) | Pending | 8 |
+| 10 | [Demo Example](./phase-10-demo-example.md) | Pending | 9 |
 
 ## Reports
 
@@ -76,3 +76,26 @@ Uses existing ecosystem libraries where possible, custom implementations only wh
 - [Game Engine Patterns](../reports/researcher-260125-2338-game-engine-patterns.md)
 - [TypeScript/Vite Setup](../reports/researcher-260125-2338-typescript-vite-setup.md)
 - [PixiJS Ecosystem Libraries](../reports/researcher-260125-2338-pixi-ecosystem-libs.md)
+
+## Validation Summary
+
+**Validated:** 2026-01-26
+**Questions asked:** 7
+
+### Confirmed Decisions
+
+| Decision | Choice |
+|----------|--------|
+| GSAP License | Personal/free use - acceptable |
+| Architecture | Singleton pattern for Game class |
+| Scene Rendering | Paused scenes remain visible (frozen) |
+| Gamepad Support | Include in MVP |
+| Spine Integration | Make optional - include but don't require |
+| Demo Type | Shooter game - tests all systems |
+| Object Pooling | Auto-pool enemies/bullets in demo |
+
+### Action Items
+
+- [x] Mark Spine as optional dependency in Phase 07
+- [x] Update Phase 10 demo to use ObjectPool for enemies/bullets
+- [x] Add note in Phase 03: paused scenes render but don't update

@@ -13,6 +13,7 @@
 - Stack-based approach enables pause/resume naturally
 - Lifecycle methods (enter/exit/pause/resume) provide clear hooks
 - Only top scene receives updates by default
+- **Paused scenes remain visible but don't receive updates** (good for pause overlays)
 - Scene transitions can be async for loading
 
 ## Requirements
