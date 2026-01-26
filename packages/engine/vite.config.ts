@@ -9,6 +9,17 @@ export default defineConfig({
       outDir: 'dist',
     }),
   ],
+  resolve: {
+    alias: {
+      buffer: 'buffer/',
+    },
+  },
+  define: {
+    'global.Buffer': ['Buffer', 'Buffer'],
+  },
+  optimizeDeps: {
+    include: ['buffer'],
+  },
   build: {
     lib: {
       entry: {
@@ -17,6 +28,7 @@ export default defineConfig({
         'scenes/index': resolve(__dirname, 'src/scenes/index.ts'),
         'utils/index': resolve(__dirname, 'src/utils/index.ts'),
         'debug/index': resolve(__dirname, 'src/debug/index.ts'),
+        'pixel-art/index': resolve(__dirname, 'src/pixel-art/index.ts'),
       },
       formats: ['es'],
     },

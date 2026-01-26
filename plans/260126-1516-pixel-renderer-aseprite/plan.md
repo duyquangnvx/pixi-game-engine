@@ -1,7 +1,7 @@
 ---
 title: "PixelRenderer Component with Aseprite Support"
 description: "Indexed palette pixel art renderer with runtime palette swap and Aseprite file loading"
-status: pending
+status: complete
 priority: P1
 effort: 2d
 branch: engine
@@ -23,11 +23,11 @@ Aseprite File → AsepriteLoader.parse() → PixelSpriteData → PixelRenderer �
 
 | # | Phase | Priority | Status | Est |
 |---|-------|----------|--------|-----|
-| 1 | [Type Definitions](phase-01-type-definitions.md) | P0 | Pending | 0.25d |
-| 2 | [Aseprite Loader](phase-02-aseprite-loader.md) | P0 | Pending | 0.5d |
-| 2b | [PixelArt Builder](phase-02b-pixel-art-builder.md) | P0 | Pending | 0.25d |
-| 3 | [PixelRenderer Component](phase-03-pixel-renderer.md) | P0 | Pending | 1d |
-| 4 | [Exports & Packaging](phase-04-exports-packaging.md) | P0 | Pending | 0.25d |
+| 1 | [Type Definitions](phase-01-type-definitions.md) | P0 | Complete | 0.25d |
+| 2 | [Aseprite Loader](phase-02-aseprite-loader.md) | P0 | Complete | 0.5d |
+| 2b | [PixelArt Builder](phase-02b-pixel-art-builder.md) | P0 | Complete | 0.25d |
+| 3 | [PixelRenderer Component](phase-03-pixel-renderer.md) | P0 | Complete | 1d |
+| 4 | [Exports & Packaging](phase-04-exports-packaging.md) | P0 | Complete | 0.25d |
 
 **Total Est**: ~2.25 days
 

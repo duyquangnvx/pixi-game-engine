@@ -35,6 +35,9 @@ export { DebugOverlay } from './debug/debug-overlay';
 export { Profiler } from './debug/profiler';
 export { Logger, ScopedLogger, LogLevel } from './debug/logger';
 
+// Pixel Art module
+export * from './pixel-art';
+
 // Types
 export type { ComponentClass, GameObjectConfig } from './types/game-object.types';
 export type { GameEvents } from './types/event.types';

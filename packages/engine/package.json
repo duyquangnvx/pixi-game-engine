@@ -26,6 +26,10 @@
     "./debug": {
       "import": "./dist/debug/index.js",
       "types": "./dist/debug/index.d.ts"
+    },
+    "./pixel-art": {
+      "import": "./dist/pixel-art/index.js",
+      "types": "./dist/pixel-art/index.d.ts"
     }
   },
   "files": [
@@ -47,6 +51,8 @@
     }
   },
   "dependencies": {
+    "ase-parser": "^0.0.18",
+    "buffer": "^6.0.3",
     "eventemitter3": "^5.0.4"
   },
   "devDependencies": {
