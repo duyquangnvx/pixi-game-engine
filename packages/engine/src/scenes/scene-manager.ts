@@ -40,31 +40,25 @@ export class SceneManager {
       return;
     }
 
-    const currentScene = this.getCurrentScene();
     const transitionConfig = typeof transition === 'string' ? DEFAULT_TRANSITIONS[transition] : transition;
+    const activeScenes = this.game.scene.getScenes(true);
 
     this.isTransitioning = true;
 
     try {
-      // Transition out
-      if (currentScene && transitionConfig.type !== 'none') {
-        await executeTransition(currentScene, transitionConfig, 'out');
+      // Transition out (use first active scene for transition effect)
+      if (activeScenes.length > 0 && transitionConfig.type !== 'none') {
+        await executeTransition(activeScenes[0], transitionConfig, 'out');
       }
 
-      // Stop current scene
-      if (currentScene) {
-        this.game.scene.stop(currentScene.scene.key);
-      }
+      // Stop all active scenes
+      activeScenes.forEach((scene) => this.game.scene.stop(scene.scene.key));
 
       // Start new scene
       this.game.scene.start(key, data);
 
-      // Update stack (replace)
-      if (this.sceneStack.length > 0) {
-        this.sceneStack[this.sceneStack.length - 1] = key;
-      } else {
-        this.sceneStack.push(key);
-      }
+      // Reset stack with new scene
+      this.sceneStack = [key];
 
       // Transition in
       const newScene = this.game.scene.getScene(key);

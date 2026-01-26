@@ -11,16 +11,7 @@ import type {
 
 /**
  * Component for rendering indexed palette pixel art with animation and palette swapping.
- * Uses Phaser DynamicTexture for efficient pixel updates.
- *
- * @example
- * const renderer = obj.addComponent(new PixelRenderer({
- *   spriteData,
- *   scale: 4,
- *   defaultAnimation: 'idle',
- * }));
- * renderer.play('walk');
- * renderer.setPalette(FIRE_SKIN_PALETTE);
+ * Uses off-screen canvas for pixel manipulation, then renders as Phaser texture.
  */
 export class PixelRenderer extends Component {
   priority = 0;
@@ -29,7 +20,6 @@ export class PixelRenderer extends Component {
 
   private spriteData: PixelSpriteData;
   private currentPalette: PixelPalette;
-  private dynamicTexture: Phaser.Textures.DynamicTexture | null = null;
   private sprite: Phaser.GameObjects.Sprite | null = null;
   private currentTag: AnimationTag | null = null;
   private currentFrameIndex = 0;
@@ -49,6 +39,10 @@ export class PixelRenderer extends Component {
   private textureKey: string;
   private repeatCount = 0;
 
+  // Off-screen canvas for pixel manipulation
+  private offscreenCanvas: HTMLCanvasElement | null = null;
+  private offscreenCtx: CanvasRenderingContext2D | null = null;
+
   constructor(config: PixelRendererConfig) {
     super();
     this.spriteData = config.spriteData;
@@ -58,13 +52,13 @@ export class PixelRenderer extends Component {
     this.textureKey = `pixel_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
     if (config.autoPlay !== false && config.defaultAnimation) {
-      // Will play after attach
       this.currentTag =
         this.spriteData.tags.find((t) => t.name === config.defaultAnimation) ?? null;
     }
   }
 
   onAttach(): void {
+    this.createOffscreenCanvas();
     this.createTexture();
     this.createSprite();
     this.renderCurrentFrame();
@@ -74,13 +68,29 @@ export class PixelRenderer extends Component {
     }
   }
 
-  private createTexture(): void {
+  private createOffscreenCanvas(): void {
     const { width, height } = this.spriteData;
-    this.dynamicTexture = this.scene.textures.addDynamicTexture(
-      this.textureKey,
-      width,
-      height
-    );
+    this.offscreenCanvas = document.createElement('canvas');
+    this.offscreenCanvas.width = width;
+    this.offscreenCanvas.height = height;
+    this.offscreenCtx = this.offscreenCanvas.getContext('2d');
+    // Disable smoothing for crisp pixel art
+    if (this.offscreenCtx) {
+      this.offscreenCtx.imageSmoothingEnabled = false;
+    }
+  }
+
+  private createTexture(): void {
+    if (!this.offscreenCanvas) return;
+    // Create texture from canvas
+    const canvasTex = this.scene.textures.addCanvas(this.textureKey, this.offscreenCanvas);
+    // Set NEAREST filter for crisp pixels on both texture and source
+    if (canvasTex) {
+      canvasTex.setFilter(Phaser.Textures.FilterMode.NEAREST);
+      if (canvasTex.source[0]) {
+        canvasTex.source[0].setFilter(Phaser.Textures.FilterMode.NEAREST);
+      }
+    }
   }
 
   private createSprite(): void {
@@ -95,28 +105,38 @@ export class PixelRenderer extends Component {
   }
 
   private renderCurrentFrame(): void {
-    if (!this.dynamicTexture) return;
+    if (!this.offscreenCtx || !this.offscreenCanvas) return;
 
     const frame = this.spriteData.frames[this.currentFrameIndex];
     if (!frame) return;
 
     const { width, height, indexedData } = frame;
-    const rgbaData = new Uint8ClampedArray(width * height * 4);
+    const imageData = this.offscreenCtx.createImageData(width, height);
+    const data = imageData.data;
 
     for (let i = 0; i < indexedData.length; i++) {
       const colorIdx = indexedData[i];
       const color = this.currentPalette.colors[colorIdx] ?? [0, 0, 0, 0];
       const offset = i * 4;
-      rgbaData[offset] = color[0];
-      rgbaData[offset + 1] = color[1];
-      rgbaData[offset + 2] = color[2];
-      rgbaData[offset + 3] = color[3];
+      data[offset] = color[0];
+      data[offset + 1] = color[1];
+      data[offset + 2] = color[2];
+      data[offset + 3] = color[3];
     }
 
-    // Use canvas context to put image data
-    const ctx = this.dynamicTexture.context;
-    ctx.putImageData(new ImageData(rgbaData, width, height), 0, 0);
-    this.dynamicTexture.dirty = true;
+    this.offscreenCtx.putImageData(imageData, 0, 0);
+
+    // Refresh the Phaser texture and ensure NEAREST filtering
+    const texture = this.scene.textures.get(this.textureKey) as Phaser.Textures.CanvasTexture;
+    if (texture) {
+      texture.refresh();
+      // Force NEAREST filter on texture AND source (WebGL resets it on refresh)
+      texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+      // Also set on source directly for WebGL
+      if (texture.source[0]) {
+        texture.source[0].setFilter(Phaser.Textures.FilterMode.NEAREST);
+      }
+    }
   }
 
   update(dt: number): void {
@@ -263,12 +283,11 @@ export class PixelRenderer extends Component {
     this.currentTag = null;
     this.isPlaying = false;
 
-    // Recreate texture if dimensions changed
-    if (this.dynamicTexture) {
-      this.scene.textures.remove(this.textureKey);
-      this.createTexture();
-      if (this.sprite) {
-        this.sprite.setTexture(this.textureKey);
+    // Recreate canvas if dimensions changed
+    if (this.offscreenCanvas) {
+      if (this.offscreenCanvas.width !== data.width || this.offscreenCanvas.height !== data.height) {
+        this.offscreenCanvas.width = data.width;
+        this.offscreenCanvas.height = data.height;
       }
     }
 
@@ -367,9 +386,11 @@ export class PixelRenderer extends Component {
       this.sprite = null;
     }
 
-    if (this.dynamicTexture) {
+    if (this.textureKey) {
       this.scene.textures.remove(this.textureKey);
-      this.dynamicTexture = null;
     }
+
+    this.offscreenCanvas = null;
+    this.offscreenCtx = null;
   }
 }
