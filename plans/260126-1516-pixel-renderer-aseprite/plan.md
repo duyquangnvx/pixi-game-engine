@@ -25,10 +25,11 @@ Aseprite File → AsepriteLoader.parse() → PixelSpriteData → PixelRenderer �
 |---|-------|----------|--------|-----|
 | 1 | [Type Definitions](phase-01-type-definitions.md) | P0 | Pending | 0.25d |
 | 2 | [Aseprite Loader](phase-02-aseprite-loader.md) | P0 | Pending | 0.5d |
+| 2b | [PixelArt Builder](phase-02b-pixel-art-builder.md) | P0 | Pending | 0.25d |
 | 3 | [PixelRenderer Component](phase-03-pixel-renderer.md) | P0 | Pending | 1d |
 | 4 | [Exports & Packaging](phase-04-exports-packaging.md) | P0 | Pending | 0.25d |
 
-**Total Est**: ~2 days
+**Total Est**: ~2.25 days
 
 ## File Structure (Isolated Module)
 
@@ -36,7 +37,8 @@ Aseprite File → AsepriteLoader.parse() → PixelSpriteData → PixelRenderer �
 packages/engine/src/
 ├── pixel-art/                    # ← Self-contained module
 │   ├── pixel-sprite.types.ts     # Type definitions
-│   ├── aseprite-loader.ts        # Parser utility
+│   ├── aseprite-loader.ts        # Binary Aseprite parser
+│   ├── pixel-art-builder.ts      # LLM-friendly string format builder
 │   ├── pixel-renderer.ts         # Main component
 │   └── index.ts                  # Module exports
 └── index.ts                      # Re-export from pixel-art/
@@ -64,9 +66,28 @@ packages/engine/src/
 
 ## API Preview
 
+### Option A: From Aseprite File (Artists)
+```typescript
+const buffer = await fetch('/hero.aseprite').then(r => r.arrayBuffer());
+const spriteData = AsepriteLoader.parse(buffer, 'hero.aseprite');
+```
+
+### Option B: From ASCII String (LLM-friendly)
+```typescript
+const spriteData = PixelArtBuilder.fromString({
+  frames: [`
+    ..XX..
+    .XSSX.
+    XSBBSX
+  `],
+  colorMap: { '.': null, 'X': '#1a1a2e', 'S': '#8a8aaa', 'B': '#f0d0a0' },
+});
+```
+
+### Usage
 ```typescript
 const renderer = obj.addComponent(new PixelRenderer({
-  spriteData: loadedData,
+  spriteData,
   scale: 4,
   defaultAnimation: 'idle',
 }));
