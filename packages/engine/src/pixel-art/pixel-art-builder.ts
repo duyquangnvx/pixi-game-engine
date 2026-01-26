@@ -85,8 +85,10 @@ export class PixelArtBuilder {
 
   private static buildPalette(colorMap: Record<string, string | null>): PixelPalette {
     const colors: RGBAColor[] = [];
+    // Sort keys to ensure transparent (null) is always first at index 0
+    const sortedEntries = this.getSortedEntries(colorMap);
 
-    for (const hex of Object.values(colorMap)) {
+    for (const [, hex] of sortedEntries) {
       if (hex === null) {
         colors.push([0, 0, 0, 0]); // transparent
       } else {
@@ -99,13 +101,28 @@ export class PixelArtBuilder {
 
   private static buildCharToIndex(colorMap: Record<string, string | null>): Map<string, number> {
     const map = new Map<string, number>();
-    const chars = Object.keys(colorMap);
+    // Sort keys to ensure transparent (null) is always first at index 0
+    const sortedEntries = this.getSortedEntries(colorMap);
 
-    chars.forEach((char, index) => {
+    sortedEntries.forEach(([char], index) => {
       map.set(char, index);
     });
 
     return map;
+  }
+
+  /**
+   * Sort colorMap entries: null values first (transparent), then by key
+   */
+  private static getSortedEntries(
+    colorMap: Record<string, string | null>
+  ): [string, string | null][] {
+    return Object.entries(colorMap).sort(([, a], [, b]) => {
+      // null (transparent) always comes first
+      if (a === null && b !== null) return -1;
+      if (a !== null && b === null) return 1;
+      return 0;
+    });
   }
 
   private static parseFrame(
