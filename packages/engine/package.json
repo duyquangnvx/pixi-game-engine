@@ -1,0 +1,75 @@
+{
+  "name": "@pge/core",
+  "version": "0.1.0",
+  "description": "Production-ready PhaserJS game engine with composition-based architecture",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./components": {
+      "import": "./dist/components/index.js",
+      "types": "./dist/components/index.d.ts"
+    },
+    "./scenes": {
+      "import": "./dist/scenes/index.js",
+      "types": "./dist/scenes/index.d.ts"
+    },
+    "./utils": {
+      "import": "./dist/utils/index.js",
+      "types": "./dist/utils/index.d.ts"
+    },
+    "./debug": {
+      "import": "./dist/debug/index.js",
+      "types": "./dist/debug/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm build"
+  },
+  "peerDependencies": {
+    "phaser": "^3.90.0"
+  },
+  "peerDependenciesMeta": {
+    "@esotericsoftware/spine-phaser": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "eventemitter3": "^5.0.4"
+  },
+  "devDependencies": {
+    "phaser": "^3.90.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "keywords": [
+    "phaser",
+    "game-engine",
+    "ecs",
+    "component-system",
+    "composition",
+    "2d-game"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/duyquangnvx/pixi-game-engine.git",
+    "directory": "packages/engine"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

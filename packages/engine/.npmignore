@@ -1,0 +1,22 @@
+# Source files (dist is published)
+src/
+tsconfig.json
+vite.config.ts
+
+# Development
+node_modules/
+.vite/
+
+# Tests
+__tests__/
+*.test.ts
+*.spec.ts
+coverage/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
