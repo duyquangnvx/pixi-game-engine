@@ -51,6 +51,8 @@ class Profiler {
 
 ## Related Code Files
 
+> **Note**: All paths relative to `packages/engine/` (after Phase 0)
+
 ### Create
 - `src/debug/debug-overlay.ts`
 - `src/debug/profiler.ts`

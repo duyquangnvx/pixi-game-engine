@@ -2,6 +2,7 @@
 
 ## Context Links
 - [Plan Overview](./plan.md)
+- [Phase 0: Monorepo Setup](./phase-00-monorepo-setup.md) ← **Prerequisite**
 - [Research: Architecture](../reports/researcher-260126-1058-game-engine-architecture.md)
 
 ## Overview
@@ -32,18 +33,22 @@
 
 ### EventBus (using eventemitter3)
 ```typescript
-import { EventEmitter } from 'eventemitter3';
+import EventEmitter from 'eventemitter3';
 
-// Typed events wrapper
+// Typed events - arrow function signatures
 interface GameEvents {
-  'player:damaged': { damage: number; source: string };
-  'enemy:killed': { enemy: GameObject };
-  'scene:ready': void;
+  'player:damaged': (damage: number, source: string) => void;
+  'enemy:killed': (enemy: GameObject) => void;
+  'scene:ready': () => void;
 }
 
 // Singleton instance with typed events
 const eventBus = new EventEmitter<GameEvents>();
 export { eventBus };
+
+// Usage:
+// eventBus.emit('player:damaged', 10, 'enemy');
+// eventBus.on('player:damaged', (damage, source) => { ... });
 ```
 
 ### ObjectPool
@@ -60,6 +65,8 @@ class ObjectPool<T extends GameObject> {
 ```
 
 ## Related Code Files
+
+> **Note**: All paths relative to `packages/engine/` (after Phase 0)
 
 ### Create
 - `src/core/event-bus.ts`
@@ -106,4 +113,5 @@ class ObjectPool<T extends GameObject> {
 | Pool exhaustion | Low | Auto-expand with warning |
 
 ## Dependencies
+- Phase 0 (Monorepo Setup) - must complete first
 - `eventemitter3` - lightweight event emitter (~1KB gzipped)

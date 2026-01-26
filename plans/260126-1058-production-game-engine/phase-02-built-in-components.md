@@ -61,6 +61,8 @@ class Transform extends Component {
 
 ## Related Code Files
 
+> **Note**: All paths relative to `packages/engine/` (after Phase 0)
+
 ### Create
 - `src/components/transform.ts`
 - `src/components/sprite-renderer.ts`

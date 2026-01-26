@@ -1,3 +1,14 @@
+---
+title: "Production-Ready PhaserJS Game Engine"
+description: "Lightweight composition-based wrapper for PhaserJS with monorepo workspace structure"
+status: pending
+priority: P0
+effort: 11.5d
+branch: engine
+tags: [phaser, game-engine, monorepo, typescript]
+created: 2026-01-26
+---
+
 # Production-Ready PhaserJS Game Engine
 
 ## Overview
@@ -8,10 +19,13 @@ Lightweight, composition-based wrapper for PhaserJS targeting:
 
 Built on Phaser 3.90 with Arcade Physics. Web-only, no multiplayer.
 
+**Monorepo Structure**: pnpm workspaces with `@pge/core` (engine) + `@pge/demo-game`
+
 ## Phases
 
 | # | Phase | Priority | Status | Est |
 |---|-------|----------|--------|-----|
+| 0 | [Monorepo Setup](phase-00-monorepo-setup.md) | P0 | Pending | 0.5d |
 | 1 | [Core Architecture](phase-01-core-architecture.md) | P0 | Pending | 2d |
 | 2 | [Built-in Components](phase-02-built-in-components.md) | P0 | Pending | 3d |
 | 3 | [Scene Management](phase-03-scene-management.md) | P1 | Pending | 2d |
@@ -19,7 +33,7 @@ Built on Phaser 3.90 with Arcade Physics. Web-only, no multiplayer.
 | 5 | [Dev Tools](phase-05-dev-tools.md) | P2 | Pending | 1d |
 | 6 | [Packaging](phase-06-packaging.md) | P1 | Pending | 1d |
 
-**Total Est**: ~11 days
+**Total Est**: ~11.5 days
 
 ## Architecture
 
@@ -39,18 +53,31 @@ Built on Phaser 3.90 with Arcade Physics. Web-only, no multiplayer.
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## File Structure
+## File Structure (Monorepo)
 
 ```
-src/
-├── core/                    # EventBus, ObjectPool
-├── game-objects/            # GameObject, Component (enhanced)
-├── components/              # Transform, SpriteRenderer, Animator, Collider
-├── scenes/                  # BaseScene, SceneManager, Transitions
-├── utils/                   # Input, Audio, Storage managers
-├── debug/                   # Overlay, Profiler (tree-shaken in prod)
-├── types/                   # TypeScript definitions
-└── index.ts                 # Public API
+pixi-game-engine/
+├── packages/
+│   ├── engine/                    # @pge/core
+│   │   ├── src/
+│   │   │   ├── core/              # EventBus, ObjectPool
+│   │   │   ├── game-objects/      # GameObject, Component
+│   │   │   ├── components/        # Transform, SpriteRenderer...
+│   │   │   ├── scenes/            # BaseScene, SceneManager
+│   │   │   ├── utils/             # Input, Audio, Storage
+│   │   │   ├── debug/             # DevTools (tree-shaken in prod)
+│   │   │   ├── types/             # TypeScript definitions
+│   │   │   └── index.ts           # Public API
+│   │   ├── package.json
+│   │   └── vite.config.ts
+│   │
+│   └── demo-game/                 # @pge/demo-game
+│       ├── src/
+│       └── package.json
+│
+├── package.json                   # Workspace root
+├── pnpm-workspace.yaml
+└── tsconfig.base.json
 ```
 
 ## Design Principles

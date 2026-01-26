@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/duyquangnvx/pixi-game-engine#readme",
   "dependencies": {
+    "eventemitter3": "^5.0.4",
     "phaser": "^3.90.0"
   },
   "devDependencies": {

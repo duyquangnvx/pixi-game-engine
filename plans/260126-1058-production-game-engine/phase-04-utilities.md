@@ -52,6 +52,8 @@ class StorageManager {
 
 ## Related Code Files
 
+> **Note**: All paths relative to `packages/engine/` (after Phase 0)
+
 ### Create
 - `src/utils/input-manager.ts`
 - `src/utils/audio-manager.ts`

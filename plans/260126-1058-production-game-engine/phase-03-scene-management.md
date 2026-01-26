@@ -53,6 +53,8 @@ class SceneManager {
 
 ## Related Code Files
 
+> **Note**: All paths relative to `packages/engine/` (after Phase 0)
+
 ### Create
 - `src/scenes/base-scene.ts`
 - `src/scenes/scene-manager.ts`
