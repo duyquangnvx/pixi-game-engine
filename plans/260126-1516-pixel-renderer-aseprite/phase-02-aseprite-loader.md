@@ -17,7 +17,7 @@ effort: 0.5d
 Utility class to parse Aseprite (.ase/.aseprite) files into PixelSpriteData format.
 
 ## File to Create
-`packages/engine/src/utils/aseprite-loader.ts` (~100 lines)
+`packages/engine/src/pixel-art/aseprite-loader.ts` (~100 lines)
 
 ## Dependencies
 Add to `packages/engine/package.json`:
@@ -31,7 +31,7 @@ Add to `packages/engine/package.json`:
 
 ```typescript
 import Aseprite from 'ase-parser';
-import type { PixelSpriteData, PixelFrame, AnimationTag, PixelPalette, RGBAColor } from '../types/pixel-sprite.types';
+import type { PixelSpriteData, PixelFrame, AnimationTag, PixelPalette, RGBAColor } from './pixel-sprite.types';
 
 export class AsepriteLoader {
   /**
@@ -71,17 +71,59 @@ export class AsepriteLoader {
 3. `extractPalette()` - Converts Aseprite palette to RGBAColor array
 4. `extractTags()` - Maps animation tags with direction handling
 
+## Validated Decisions
+
+### RGBA Mode Handling
+If Aseprite file uses RGBA mode instead of Indexed:
+- Extract all unique colors from pixels
+- Build palette automatically from unique colors
+- Convert RGBA pixels to palette indices
+```typescript
+private static rgbaToIndexed(rgbaData: Uint8Array, width: number, height: number): { indexedData: Uint8Array; palette: PixelPalette } {
+  const colorMap = new Map<string, number>(); // 'r,g,b,a' -> index
+  const colors: RGBAColor[] = [[0, 0, 0, 0]]; // Index 0 = transparent
+  const indexedData = new Uint8Array(width * height);
+
+  for (let i = 0; i < rgbaData.length; i += 4) {
+    const key = `${rgbaData[i]},${rgbaData[i+1]},${rgbaData[i+2]},${rgbaData[i+3]}`;
+    if (!colorMap.has(key)) {
+      colorMap.set(key, colors.length);
+      colors.push([rgbaData[i], rgbaData[i+1], rgbaData[i+2], rgbaData[i+3]]);
+    }
+    indexedData[i / 4] = colorMap.get(key)!;
+  }
+  return { indexedData, palette: { colors } };
+}
+```
+
+### Auto-create 'default' Tag
+If no tags defined in Aseprite file:
+```typescript
+private static extractTags(ase: Aseprite): AnimationTag[] {
+  if (!ase.tags || ase.tags.length === 0) {
+    // Auto-create 'default' tag with all frames
+    return [{
+      name: 'default',
+      from: 0,
+      to: ase.frames.length - 1,
+      direction: 'forward',
+      repeat: 0, // infinite loop
+    }];
+  }
+  // ... normal tag extraction
+}
+```
+
 ## Risk: Browser Buffer
-ase-parser uses Node.js Buffer. Solutions:
-1. Add `buffer` polyfill to vite config
-2. Or use alternative browser-compatible parser
+**Decision:** Add buffer polyfill to Vite config (handled in Phase 4)
 
 ## Todo
 - [ ] Add ase-parser dependency
-- [ ] Create aseprite-loader.ts
+- [ ] Create aseprite-loader.ts in pixel-art/
+- [ ] Implement RGBA→Indexed auto-conversion
+- [ ] Implement 'default' tag auto-creation
 - [ ] Test with sample .aseprite file
 - [ ] Verify browser compatibility
-- [ ] Export from utils/index.ts
 
 ## Success Criteria
 - Parse Aseprite file to PixelSpriteData

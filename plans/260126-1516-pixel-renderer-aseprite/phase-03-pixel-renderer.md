@@ -17,7 +17,7 @@ effort: 1d
 Main component for rendering indexed palette pixel art with animation and runtime palette swapping.
 
 ## File to Create
-`packages/engine/src/components/pixel-renderer.ts` (~150 lines)
+`packages/engine/src/pixel-art/pixel-renderer.ts` (~150 lines)
 
 ## API Design
 
@@ -50,6 +50,7 @@ class PixelRenderer extends Component {
   get/set scale: number;
   get/set flipX: boolean;
   get/set flipY: boolean;
+  get/set timeScale: number; // Animation speed (0.5 = slow, 2 = fast)
 }
 ```
 
@@ -63,6 +64,7 @@ private currentTag: AnimationTag | null;
 private currentFrameIndex: number;
 private frameTimer: number;
 private isPlaying: boolean;
+private _timeScale: number = 1; // Animation speed multiplier
 ```
 
 ## Key Methods
@@ -84,9 +86,30 @@ private isPlaying: boolean;
 3. Emit events (frameChange, animationComplete)
 
 ### setPalette(palette)
-1. Update currentPalette
-2. Re-render current frame
-3. Emit paletteChange event
+1. **Validate palette size** - Must match original palette length
+   ```typescript
+   if (palette.colors.length !== this.spriteData.palette.colors.length) {
+     throw new Error(`Palette size mismatch: expected ${this.spriteData.palette.colors.length}, got ${palette.colors.length}`);
+   }
+   ```
+2. Update currentPalette
+3. Re-render current frame
+4. Emit paletteChange event
+
+### update(dt) - with timeScale
+```typescript
+update(dt: number): void {
+  if (!this.isPlaying || !this.currentTag) return;
+
+  const frame = this.spriteData.frames[this.currentFrameIndex];
+  this.frameTimer += dt * this._timeScale; // Apply timeScale
+
+  if (this.frameTimer >= frame.duration) {
+    this.frameTimer -= frame.duration;
+    this.advanceFrame();
+  }
+}
+```
 
 ## Phaser Integration
 - Use `DynamicTexture` for efficient pixel updates
@@ -94,21 +117,22 @@ private isPlaying: boolean;
 - Add sprite to owner container
 
 ## Todo
-- [ ] Create pixel-renderer.ts
+- [ ] Create pixel-renderer.ts in pixel-art/
 - [ ] Implement constructor and config handling
 - [ ] Implement onAttach (create texture, sprite)
 - [ ] Implement renderFrame (indexed → RGBA)
-- [ ] Implement animation update loop
+- [ ] Implement animation update loop with timeScale
 - [ ] Implement play/stop/pause/resume
-- [ ] Implement setPalette
+- [ ] Implement setPalette with size validation
 - [ ] Implement setSpriteData
-- [ ] Implement property getters/setters
+- [ ] Implement property getters/setters (including timeScale)
 - [ ] Implement onDetach (cleanup)
-- [ ] Export from components/index.ts
 
 ## Success Criteria
 - Renders pixel art from PixelSpriteData
 - Animations play with correct timing
+- timeScale affects animation speed correctly
 - Palette swap updates display instantly
+- Palette validation throws error on size mismatch
 - Events fire correctly
 - Proper cleanup on detach

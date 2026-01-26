@@ -13,68 +13,79 @@ effort: 0.25d
 - Depends on: All previous phases
 
 ## Overview
-Update export files and package.json to expose new components.
+Create module index and update main exports with browser compatibility.
 
-## Files to Modify
+## Files to Create/Modify
 
-### 1. packages/engine/package.json
-Add dependency:
-```json
-"dependencies": {
-  "ase-parser": "^1.1.0"
-}
-```
-
-### 2. packages/engine/src/types/index.ts
-Add export:
+### 1. packages/engine/src/pixel-art/index.ts (NEW)
+Module barrel export:
 ```typescript
-export * from './pixel-sprite.types';
-```
+// Types
+export type {
+  RGBAColor,
+  PixelPalette,
+  PixelFrame,
+  AnimationTag,
+  PixelSpriteData,
+  PixelRendererConfig,
+  PixelRendererEvents,
+} from './pixel-sprite.types';
 
-### 3. packages/engine/src/components/index.ts
-Add exports:
-```typescript
+// Classes
+export { AsepriteLoader } from './aseprite-loader';
 export { PixelRenderer } from './pixel-renderer';
 ```
 
-### 4. packages/engine/src/utils/index.ts
-Add export:
+### 2. packages/engine/src/index.ts
+Add re-export from pixel-art module:
 ```typescript
-export { AsepriteLoader } from './aseprite-loader';
+// Pixel Art module
+export * from './pixel-art';
 ```
 
-### 5. packages/engine/src/index.ts
-Add to main exports:
+### 3. packages/engine/package.json
+Add dependencies:
+```json
+"dependencies": {
+  "ase-parser": "^1.1.0",
+  "buffer": "^6.0.3"
+}
+```
+
+### 4. packages/engine/vite.config.ts
+Add Buffer polyfill for browser compatibility:
 ```typescript
-// Components
-export { PixelRenderer } from './components/pixel-renderer';
+import { defineConfig } from 'vite';
 
-// Utils
-export { AsepriteLoader } from './utils/aseprite-loader';
-
-// Types
-export type {
-  PixelSpriteData,
-  PixelFrame,
-  AnimationTag,
-  PixelPalette,
-  RGBAColor,
-  PixelRendererConfig,
-  PixelRendererEvents,
-} from './types/pixel-sprite.types';
+export default defineConfig({
+  resolve: {
+    alias: {
+      buffer: 'buffer/',
+    },
+  },
+  define: {
+    'global.Buffer': 'Buffer',
+  },
+  optimizeDeps: {
+    include: ['buffer'],
+  },
+  // ... existing config
+});
 ```
 
 ## Todo
-- [ ] Add ase-parser to package.json
-- [ ] Update types/index.ts
-- [ ] Update components/index.ts
-- [ ] Update utils/index.ts
-- [ ] Update main index.ts
+- [ ] Create pixel-art/index.ts barrel export
+- [ ] Add re-export to main index.ts
+- [ ] Add ase-parser and buffer to package.json
+- [ ] Add Buffer polyfill to vite.config.ts
 - [ ] Run pnpm install
 - [ ] Run pnpm typecheck
 - [ ] Run pnpm build
+- [ ] Test in browser environment
 
 ## Success Criteria
 - All exports accessible from '@pge/core'
+- Sub-path import works: `import { PixelRenderer } from '@pge/core/pixel-art'`
 - TypeScript compilation passes
 - Build succeeds without errors
+- Buffer polyfill works in browser (no "Buffer is not defined" error)

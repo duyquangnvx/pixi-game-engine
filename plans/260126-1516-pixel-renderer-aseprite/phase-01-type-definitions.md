@@ -16,7 +16,7 @@ effort: 0.25d
 Define TypeScript interfaces for PixelSpriteData, frames, animation tags, and component config.
 
 ## File to Create
-`packages/engine/src/types/pixel-sprite.types.ts` (~30 lines)
+`packages/engine/src/pixel-art/pixel-sprite.types.ts` (~30 lines)
 
 ## Implementation
 
@@ -74,6 +74,8 @@ export interface PixelRendererConfig {
   scale?: number;
   defaultAnimation?: string;
   autoPlay?: boolean;
+  /** Animation speed multiplier (default: 1). Use 0.5 for slow-mo, 2 for fast */
+  timeScale?: number;
 }
 
 /**
@@ -87,8 +89,8 @@ export interface PixelRendererEvents {
 ```
 
 ## Todo
+- [ ] Create pixel-art/ folder
 - [ ] Create pixel-sprite.types.ts file
-- [ ] Export from types/index.ts
 
 ## Success Criteria
 - All interfaces defined with proper JSDoc
