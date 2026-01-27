@@ -16,8 +16,14 @@ export interface ColliderEvents {
   collisionEnter: (other: GameObject) => void;
   /** Fired while colliding */
   collisionStay: (other: GameObject) => void;
-  /** Fired on overlap (trigger mode) */
+  /** Fired when collision ends */
+  collisionExit: (other: GameObject) => void;
+  /** Fired on overlap start (trigger mode) */
   triggerEnter: (other: GameObject) => void;
+  /** Fired while overlapping (trigger mode) */
+  triggerStay: (other: GameObject) => void;
+  /** Fired when overlap ends (trigger mode) */
+  triggerExit: (other: GameObject) => void;
 }
 
 /**
@@ -44,9 +50,19 @@ export interface ColliderConfig {
  * collider.events.on('collisionEnter', (other) => console.log('Hit!', other));
  */
 export class Collider extends Component {
+  /** Registry of all active colliders per scene (by scene key) */
+  private static registry = new Map<string, Set<Collider>>();
+
   private body: Phaser.Physics.Arcade.Body | null = null;
   private config: Required<ColliderConfig>;
   private debugGraphics: Phaser.GameObjects.Graphics | null = null;
+
+  /** Track current frame collisions for enter/stay/exit detection */
+  private currentCollisions = new Set<GameObject>();
+  private previousCollisions = new Set<GameObject>();
+
+  /** Phaser collider/overlap objects for cleanup */
+  private phaserColliders: Phaser.Physics.Arcade.Collider[] = [];
 
   /** Event emitter for collision events */
   readonly events = new EventEmitter<ColliderEvents>();
@@ -79,6 +95,74 @@ export class Collider extends Component {
     }
 
     this.applyConfig();
+    this.registerAndSetupCollisions();
+  }
+
+  /** Register this collider and set up collision callbacks with existing colliders */
+  private registerAndSetupCollisions(): void {
+    const sceneKey = this.scene.scene.key;
+
+    // Get or create registry for this scene
+    if (!Collider.registry.has(sceneKey)) {
+      Collider.registry.set(sceneKey, new Set());
+    }
+    const sceneColliders = Collider.registry.get(sceneKey)!;
+
+    // Set up collision/overlap with all existing colliders
+    for (const other of sceneColliders) {
+      if (other === this || !other.body) continue;
+      this.setupCollisionPair(other);
+    }
+
+    // Register this collider
+    sceneColliders.add(this);
+  }
+
+  /** Set up collision or overlap between this collider and another */
+  private setupCollisionPair(other: Collider): void {
+    if (!this.body || !other.body) return;
+
+    const callback: Phaser.Types.Physics.Arcade.ArcadePhysicsCallback = (obj1, obj2) => {
+      // obj1/obj2 can be Body, StaticBody, GameObjectWithBody, or Tile
+      // We need the game objects, which are stored in body.gameObject
+      const go1 = this.resolveGameObject(obj1);
+      const go2 = this.resolveGameObject(obj2);
+
+      if (!go1 || !go2) return;
+
+      // Check collision masks
+      if (!this.canCollideWith(other)) return;
+
+      // Track collision for this frame
+      this.currentCollisions.add(go2);
+      other.currentCollisions.add(go1);
+    };
+
+    // Use overlap for triggers, collide for solid bodies
+    const useTrigger = this.config.isTrigger || other.config.isTrigger;
+
+    if (useTrigger) {
+      const overlap = this.scene.physics.add.overlap(this.owner, other.owner, callback);
+      this.phaserColliders.push(overlap);
+      other.phaserColliders.push(overlap);
+    } else {
+      const collider = this.scene.physics.add.collider(this.owner, other.owner, callback);
+      this.phaserColliders.push(collider);
+      other.phaserColliders.push(collider);
+    }
+  }
+
+  /** Resolve a Phaser physics object to our GameObject */
+  private resolveGameObject(
+    obj: Phaser.Physics.Arcade.Body | Phaser.Physics.Arcade.StaticBody | Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile
+  ): GameObject | null {
+    if ('gameObject' in obj && obj.gameObject) {
+      return obj.gameObject as GameObject;
+    }
+    if ('body' in obj) {
+      return obj as unknown as GameObject;
+    }
+    return null;
   }
 
   private applyConfig(): void {
@@ -153,6 +237,9 @@ export class Collider extends Component {
   }
 
   lateUpdate(): void {
+    // Process collision state changes and emit events
+    this.processCollisionEvents();
+
     // Update debug visualization
     if (this.debugGraphics && this.body) {
       this.debugGraphics.clear();
@@ -166,7 +253,68 @@ export class Collider extends Component {
     }
   }
 
+  /** Process collision state changes and emit appropriate events */
+  private processCollisionEvents(): void {
+    const isTrigger = this.config.isTrigger;
+
+    // Check for new collisions (enter)
+    for (const other of this.currentCollisions) {
+      if (!this.previousCollisions.has(other)) {
+        // New collision
+        if (isTrigger) {
+          this.events.emit('triggerEnter', other);
+        } else {
+          this.events.emit('collisionEnter', other);
+        }
+      } else {
+        // Ongoing collision (stay)
+        if (isTrigger) {
+          this.events.emit('triggerStay', other);
+        } else {
+          this.events.emit('collisionStay', other);
+        }
+      }
+    }
+
+    // Check for ended collisions (exit)
+    for (const other of this.previousCollisions) {
+      if (!this.currentCollisions.has(other)) {
+        if (isTrigger) {
+          this.events.emit('triggerExit', other);
+        } else {
+          this.events.emit('collisionExit', other);
+        }
+      }
+    }
+
+    // Swap buffers for next frame
+    this.previousCollisions = new Set(this.currentCollisions);
+    this.currentCollisions.clear();
+  }
+
   onDetach(): void {
+    // Unregister from scene registry
+    const sceneKey = this.scene.scene.key;
+    const sceneColliders = Collider.registry.get(sceneKey);
+    if (sceneColliders) {
+      sceneColliders.delete(this);
+      if (sceneColliders.size === 0) {
+        Collider.registry.delete(sceneKey);
+      }
+    }
+
+    // Destroy Phaser colliders
+    for (const collider of this.phaserColliders) {
+      if (collider.active) {
+        collider.destroy();
+      }
+    }
+    this.phaserColliders = [];
+
+    // Clear collision tracking
+    this.currentCollisions.clear();
+    this.previousCollisions.clear();
+
     if (this.debugGraphics) {
       this.debugGraphics.destroy();
       this.debugGraphics = null;
