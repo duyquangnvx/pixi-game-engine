@@ -61,6 +61,17 @@ export class GameObject extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Get component by type, throw error if not found.
+   */
+  requireComponent<T extends Component>(type: ComponentClass<T>): T {
+    const component = this.getComponent(type);
+    if (!component) {
+      throw new Error(`Component ${type.name} not found on ${this.id}`);
+    }
+    return component;
+  }
+
+  /**
    * Check if component exists.
    */
   hasComponent(type: ComponentClass): boolean {
