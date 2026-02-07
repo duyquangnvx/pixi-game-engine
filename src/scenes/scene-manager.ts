@@ -27,6 +27,8 @@ export class SceneManager {
             throw new Error(`Scene "${name}" not found`);
         }
 
+        const previousName = this.currentSceneName;
+
         // Exit current scene
         if (this.currentScene) {
             this.currentScene.onExit();
@@ -41,6 +43,8 @@ export class SceneManager {
 
         Engine.stage.addChild(scene);
         await scene.onEnter();
+
+        Engine.onSceneChange.emit({ from: previousName, to: name });
     }
 
     /** Get current scene name */

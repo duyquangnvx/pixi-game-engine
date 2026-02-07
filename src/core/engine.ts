@@ -60,6 +60,8 @@ export class Engine {
     public static readonly onVisibilityChange = new Signal<boolean>();
     /** Signal emitted when browser window gains/loses focus (true = focused, false = blurred) */
     public static readonly onFocusChange = new Signal<boolean>();
+    /** Signal emitted when scene changes (payload: { from: previous scene name or null, to: new scene name }) */
+    public static readonly onSceneChange = new Signal<{ from: string | null; to: string }>();
 
     /** Design resolution width (original config width) */
     private static _designWidth: number;
@@ -335,6 +337,7 @@ export class Engine {
         Engine.onDestroy.clear();
         Engine.onVisibilityChange.clear();
         Engine.onFocusChange.clear();
+        Engine.onSceneChange.clear();
         Engine._app.destroy(true, { children: true, texture: true });
         Engine._isRunning = false;
         Engine._initialized = false;
