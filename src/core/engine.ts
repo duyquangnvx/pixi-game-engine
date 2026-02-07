@@ -52,6 +52,14 @@ export class Engine {
     public static readonly onResize = new Signal<{ width: number; height: number; scale: number }>();
     /** Signal emitted when engine is updated */
     public static readonly onUpdate = new Signal<number>();
+    /** Signal emitted at the end of init() after all managers are constructed */
+    public static readonly onReady = new Signal<void>();
+    /** Signal emitted at the start of destroy() before any teardown */
+    public static readonly onDestroy = new Signal<void>();
+    /** Signal emitted when browser tab visibility changes (true = visible, false = hidden) */
+    public static readonly onVisibilityChange = new Signal<boolean>();
+    /** Signal emitted when browser window gains/loses focus (true = focused, false = blurred) */
+    public static readonly onFocusChange = new Signal<boolean>();
 
     /** Design resolution width (original config width) */
     private static _designWidth: number;
@@ -64,6 +72,9 @@ export class Engine {
 
     private static _isRunning = false;
     private static _resizeHandler: () => void;
+    private static _visibilityHandler: () => void;
+    private static _focusHandler: () => void;
+    private static _blurHandler: () => void;
     private static _initialized = false;
 
     /** Logger instance for consistent logging across the engine */
@@ -176,6 +187,19 @@ export class Engine {
         // Start game loop
         Engine._app.ticker.add(Engine.update);
         Engine._isRunning = true;
+
+        // Register browser visibility/focus listeners
+        Engine._visibilityHandler = () => {
+            Engine.onVisibilityChange.emit(!document.hidden);
+        };
+        Engine._focusHandler = () => Engine.onFocusChange.emit(true);
+        Engine._blurHandler = () => Engine.onFocusChange.emit(false);
+
+        document.addEventListener('visibilitychange', Engine._visibilityHandler);
+        window.addEventListener('focus', Engine._focusHandler);
+        window.addEventListener('blur', Engine._blurHandler);
+
+        Engine.onReady.emit();
     }
 
     private static update(delta: number): void {
@@ -287,6 +311,13 @@ export class Engine {
     public static destroy(): void {
         if (!Engine._initialized) return;
 
+        Engine.onDestroy.emit();
+
+        // Remove browser event listeners
+        document.removeEventListener('visibilitychange', Engine._visibilityHandler);
+        window.removeEventListener('focus', Engine._focusHandler);
+        window.removeEventListener('blur', Engine._blurHandler);
+
         window.removeEventListener('resize', Engine._resizeHandler);
         Engine._app.ticker.remove(Engine.update);
         Engine._input.destroy();
@@ -300,6 +331,10 @@ export class Engine {
         Engine.onPause.clear();
         Engine.onResume.clear();
         Engine.onResize.clear();
+        Engine.onReady.clear();
+        Engine.onDestroy.clear();
+        Engine.onVisibilityChange.clear();
+        Engine.onFocusChange.clear();
         Engine._app.destroy(true, { children: true, texture: true });
         Engine._isRunning = false;
         Engine._initialized = false;
