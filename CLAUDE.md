@@ -2,11 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-# From monorepo root
-pnpm build:engine                     # Build library
-pnpm --filter @slot-game/game-engine dev   # Watch mode build
-pnpm --filter @slot-game/game-engine test  # Run tests
-pnpm --filter @slot-game/game-engine typecheck
+pnpm build        # Build library (tsup → ESM + CJS + DTS)
+pnpm dev          # Watch mode build
+pnpm test         # Run tests
+pnpm typecheck    # tsc --noEmit
 
 ### Game Singleton Pattern
 

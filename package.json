@@ -1,5 +1,5 @@
 {
-  "name": "@slot-game/game-engine",
+  "name": "@duyquangnvx/pixi-game-engine",
   "version": "0.1.0",
   "type": "module",
   "main": "dist/index.cjs",
@@ -16,10 +16,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "vite build",
-    "dev": "vite build --watch",
+    "build": "tsup",
+    "dev": "tsup --watch",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {
     "@pixi/particle-emitter": "^5.0.10",
@@ -30,9 +31,8 @@
     "pixi.js": "^7.4.2"
   },
   "devDependencies": {
-    "typescript": "^5.9.3",
-    "vite": "^6.0.6",
-    "vite-plugin-dts": "^4.3.0"
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "pixi.js": "^7.0.0"
