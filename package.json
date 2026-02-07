@@ -1,0 +1,39 @@
+{
+  "name": "@slot-game/game-engine",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@pixi/particle-emitter": "^5.0.10",
+    "@pixi/sound": "^5.2.3",
+    "@pixi/ui": "^1.2.4",
+    "gsap": "^3.12.7",
+    "pixi-spine": "^4.0.5",
+    "pixi.js": "^7.4.2"
+  },
+  "devDependencies": {
+    "vite": "^6.0.6",
+    "vite-plugin-dts": "^4.3.0"
+  },
+  "peerDependencies": {
+    "pixi.js": "^7.0.0"
+  }
+}
