@@ -1,17 +1,17 @@
-# @pixi-game/game-engine
+# @duyquangnvx/pixi-game-engine
 
 Full-featured PixiJS v7 game engine with TypeScript support.
 
 ## Installation
 
 ```bash
-pnpm add @pixi-game/game-engine
+pnpm add @duyquangnvx/pixi-game-engine
 ```
 
 ## Quick Start
 
 ```typescript
-import { Game, Scene, PIXI } from '@pixi-game/game-engine';
+import { Engine, Scene, PIXI } from '@duyquangnvx/pixi-game-engine';
 
 class GameScene extends Scene {
   private player!: PIXI.Sprite;
@@ -20,13 +20,13 @@ class GameScene extends Scene {
     this.player = new PIXI.Graphics();
     this.player.beginFill(0x4ecca3);
     this.player.drawRect(-25, -25, 50, 50);
-    this.player.x = this.game.screen.width / 2;
-    this.player.y = this.game.screen.height / 2;
+    this.player.x = Engine.screen.width / 2;
+    this.player.y = Engine.screen.height / 2;
     this.addChild(this.player);
   }
 
   onUpdate(delta: number) {
-    const { keyboard } = this.game.input;
+    const { keyboard } = Engine.input;
 
     if (keyboard.isDown('ArrowLeft')) this.player.x -= 5 * delta;
     if (keyboard.isDown('ArrowRight')) this.player.x += 5 * delta;
@@ -37,15 +37,15 @@ class GameScene extends Scene {
   onExit() {}
 }
 
-const game = new Game({
+Engine.init({
   width: 800,
   height: 600,
   backgroundColor: 0x1a1a2e,
 });
 
-document.body.appendChild(game.view as HTMLCanvasElement);
-game.scenes.add('game', GameScene);
-game.scenes.start('game');
+document.body.appendChild(Engine.view as HTMLCanvasElement);
+Engine.scenes.add('game', GameScene);
+Engine.scenes.start('game');
 ```
 
 ## Features
