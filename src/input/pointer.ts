@@ -1,4 +1,4 @@
-import { Game } from '../core/game';
+import { Engine } from '../core/engine';
 
 export interface PointerState {
     x: number;
@@ -20,7 +20,7 @@ export class PointerManager {
         this.onPointerDown = this.onPointerDown.bind(this);
         this.onPointerUp = this.onPointerUp.bind(this);
 
-        const view = Game.instance.view as HTMLCanvasElement;
+        const view = Engine.view as HTMLCanvasElement;
         view.addEventListener('pointermove', this.onPointerMove);
         view.addEventListener('pointerdown', this.onPointerDown);
         view.addEventListener('pointerup', this.onPointerUp);
@@ -28,10 +28,10 @@ export class PointerManager {
     }
 
     private getCanvasCoords(event: PointerEvent): { x: number; y: number } {
-        const view = Game.instance.view as HTMLCanvasElement;
+        const view = Engine.view as HTMLCanvasElement;
         const rect = view.getBoundingClientRect();
-        const scaleX = Game.instance.screen.width / rect.width;
-        const scaleY = Game.instance.screen.height / rect.height;
+        const scaleX = Engine.screen.width / rect.width;
+        const scaleY = Engine.screen.height / rect.height;
 
         return {
             x: (event.clientX - rect.left) * scaleX,
@@ -102,7 +102,7 @@ export class PointerManager {
 
     /** Clean up event listeners */
     public destroy(): void {
-        const view = Game.instance.view as HTMLCanvasElement;
+        const view = Engine.view as HTMLCanvasElement;
         view.removeEventListener('pointermove', this.onPointerMove);
         view.removeEventListener('pointerdown', this.onPointerDown);
         view.removeEventListener('pointerup', this.onPointerUp);

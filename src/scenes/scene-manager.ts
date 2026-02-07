@@ -1,4 +1,4 @@
-import { Game } from '../core/game';
+import { Engine } from '../core/engine';
 import type { Scene } from './scene';
 
 type SceneClass = new () => Scene;
@@ -30,7 +30,7 @@ export class SceneManager {
         // Exit current scene
         if (this.currentScene) {
             this.currentScene.onExit();
-            Game.instance.stage.removeChild(this.currentScene);
+            Engine.stage.removeChild(this.currentScene);
             this.currentScene.destroy({ children: true });
         }
 
@@ -39,7 +39,7 @@ export class SceneManager {
         this.currentScene = scene;
         this.currentSceneName = name;
 
-        Game.instance.stage.addChild(scene);
+        Engine.stage.addChild(scene);
         await scene.onEnter();
     }
 

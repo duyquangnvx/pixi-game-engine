@@ -1,10 +1,10 @@
 import * as PIXI from 'pixi.js';
-import { Game } from '../core/game';
+import { Engine } from '../core/engine';
 
 export abstract class Scene extends PIXI.Container {
-    /** Get game instance */
-    protected get game(): Game {
-        return Game.instance;
+    /** Get engine class for static access */
+    protected get engine(): typeof Engine {
+        return Engine;
     }
 
     /** Called when scene becomes active */

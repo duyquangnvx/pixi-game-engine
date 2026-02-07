@@ -1,6 +1,6 @@
 // Core
-export { Game, Signal } from './core';
-export type { GameConfig, ScaleMode, SignalBinding } from './core';
+export { Engine, Signal } from './core';
+export type { EngineConfig, ScaleMode, SignalBinding } from './core';
 
 // Scenes
 export { Scene, SceneManager } from './scenes';

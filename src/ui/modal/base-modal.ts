@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import gsap from 'gsap';
-import { Game } from '../../core/game';
+import { Engine } from '../../core/engine';
 import { Signal } from '../../core/signal';
 
 export type ModalAnimation = 'fade' | 'scale' | 'slide' | 'none';
@@ -76,7 +76,7 @@ const TEXT_COLOR = 0xffffff;
 /**
  * Base modal class providing backdrop, close button, animations, and dragging.
  * Extend this class and build your content in onShow or constructor.
- * Uses Game.instance singleton for screen dimensions - no need to pass them.
+ * Uses Engine static class for screen dimensions - no need to pass them.
  */
 export class BaseModal<TData = void> extends PIXI.Container {
     protected backdrop!: PIXI.Graphics;
@@ -97,14 +97,14 @@ export class BaseModal<TData = void> extends PIXI.Container {
     /** Signal emitted when modal is shown (with data) */
     public readonly didShow = new Signal<TData>();
 
-    /** Get screen width from Game singleton */
+    /** Get screen width from Engine */
     protected get screenWidth(): number {
-        return Game.instance.screen.width;
+        return Engine.screen.width;
     }
 
-    /** Get screen height from Game singleton */
+    /** Get screen height from Engine */
     protected get screenHeight(): number {
-        return Game.instance.screen.height;
+        return Engine.screen.height;
     }
 
     constructor(config?: BaseModalConfig) {
@@ -113,7 +113,7 @@ export class BaseModal<TData = void> extends PIXI.Container {
         this.setup();
 
         // Auto-resize when game resizes
-        this.resizeBinding = Game.instance.onResize.add(() => {
+        this.resizeBinding = Engine.onResize.add(() => {
             this.drawBackdrop();
             if (this.config.centered) {
                 this.centerModal();
@@ -279,7 +279,7 @@ export class BaseModal<TData = void> extends PIXI.Container {
         this.backdrop.clear();
         if (this.config.backdrop) {
             // Use fullscreen bounds to cover entire viewport including letterbox areas
-            const bounds = Game.instance.getFullscreenBounds();
+            const bounds = Engine.getFullscreenBounds();
             this.backdrop.beginFill(0x000000, this.config.backdropAlpha);
             this.backdrop.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
             this.backdrop.endFill();

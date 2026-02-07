@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import gsap from 'gsap';
-import { Game } from '../../core/game';
+import { Engine } from '../../core/engine';
 import type { ToastColorSet, ToastTheme, ToastThemePreset } from './toast-theme';
 import { TOAST_PRESETS, getDefaultColors } from './toast-presets';
 
@@ -109,14 +109,14 @@ export class ToastManager {
     private currentThemeName: string;
     private resizeBinding: { detach: () => void } | null = null;
 
-    /** Get screen width from Game singleton */
+    /** Get screen width from Engine */
     private get screenWidth(): number {
-        return Game.instance.screen.width;
+        return Engine.screen.width;
     }
 
-    /** Get screen height from Game singleton */
+    /** Get screen height from Engine */
     private get screenHeight(): number {
-        return Game.instance.screen.height;
+        return Engine.screen.height;
     }
 
     constructor(stage: PIXI.Container, config?: ToastManagerConfig) {
@@ -142,7 +142,7 @@ export class ToastManager {
         stage.addChild(this.layer);
 
         // Auto-resize when game resizes
-        this.resizeBinding = Game.instance.onResize.add(() => {
+        this.resizeBinding = Engine.onResize.add(() => {
             this.repositionToasts();
         });
     }

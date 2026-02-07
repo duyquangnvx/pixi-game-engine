@@ -7,46 +7,46 @@ pnpm dev          # Watch mode build
 pnpm test         # Run tests
 pnpm typecheck    # tsc --noEmit
 
-### Game Singleton Pattern
+### Static Engine Pattern
 
-**IMPORTANT:** Always use `Game.instance` to access the game instead of passing `game` as constructor parameter.
+**IMPORTANT:** Always use `Engine` static class to access subsystems directly — no instance needed.
 
 ```typescript
-// ✅ PREFERRED - Use singleton
-import { Game } from '@slot-game/game-engine';
+// ✅ PREFERRED - Use static Engine
+import { Engine } from '@slot-game/game-engine';
 
 class MyComponent {
   doSomething() {
-    Game.instance.tween.to(this, { alpha: 0 });
-    Game.instance.sound.playSfx('click');
+    Engine.tween.to(this, { alpha: 0 });
+    Engine.sound.playSfx('click');
   }
 }
 
-// ❌ AVOID - Passing game as parameter
+// ❌ AVOID - Passing engine as parameter
 class MyComponent {
-  constructor(private game: Game) {} // Don't do this
+  constructor(private engine: typeof Engine) {} // Don't do this
 }
 ```
 
 **Initialization:**
 ```typescript
-const game = Game.init({ width: 1920, height: 1080 });
-document.body.appendChild(game.view as HTMLCanvasElement);
+Engine.init({ width: 1920, height: 1080 });
+document.body.appendChild(Engine.view as HTMLCanvasElement);
 ```
 
 ### Manager Pattern
 
-The `Game` class (`src/core/game.ts`) orchestrates all subsystems. Access via `Game.instance`:
+The `Engine` class (`src/core/engine.ts`) orchestrates all subsystems. Access via static getters:
 
 ```typescript
-Game.instance.scenes    // SceneManager - scene lifecycle
-Game.instance.input     // InputManager - keyboard, pointer, gamepad
-Game.instance.assets    // AssetManager - manifest-based loading
-Game.instance.sound     // SoundManager - @pixi/sound wrapper
-Game.instance.particles // ParticleManager - particle effects
-Game.instance.tween     // TweenManager - GSAP with PixiPlugin
-Game.instance.ui        // UIManager - @pixi/ui components
-Game.instance.spine     // SpineManager - Spine animations
+Engine.scenes    // SceneManager - scene lifecycle
+Engine.input     // InputManager - keyboard, pointer, gamepad
+Engine.assets    // AssetManager - manifest-based loading
+Engine.sound     // SoundManager - @pixi/sound wrapper
+Engine.particles // ParticleManager - particle effects
+Engine.tween     // TweenManager - GSAP with PixiPlugin
+Engine.ui        // UIManager - @pixi/ui components
+Engine.spine     // SpineManager - Spine animations
 ```
 
 Game loop order: input.update() → scenes.update() → particles.update() → input.postUpdate()
@@ -69,8 +69,8 @@ abstract class Scene extends PIXI.Container {
 
 ```
 src/
-├── core/                 # Game orchestrator, Signal
-│   ├── game.ts
+├── core/                 # Engine orchestrator, Signal
+│   ├── engine.ts
 │   ├── signal.ts
 │   └── index.ts
 ├── scenes/               # Scene, SceneManager

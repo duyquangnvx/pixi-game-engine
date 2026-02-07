@@ -1,4 +1,4 @@
-export { Game } from './game';
-export type { GameConfig, ScaleMode } from './game';
+export { Engine } from './engine';
+export type { EngineConfig, ScaleMode } from './engine';
 export { Signal } from './signal';
 export type { SignalBinding } from './signal';
