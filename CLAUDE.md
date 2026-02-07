@@ -70,17 +70,29 @@ abstract class Scene extends PIXI.Container {
 
 ```
 src/
-├── core/game.ts          # Game orchestrator
+├── core/                 # Game orchestrator, Signal
+│   ├── game.ts
+│   ├── signal.ts
+│   └── index.ts
 ├── scenes/               # Scene, SceneManager
 ├── input/                # KeyboardManager, PointerManager, GamepadManager
 ├── assets/               # AssetManager, manifest types
 ├── sound/                # SoundManager
 ├── particles/            # ParticleManager
 ├── tween/                # TweenManager (GSAP integration)
-├── ui/                   # UIManager
 ├── spine/                # SpineManager
-└── index.ts              # Barrel exports
+├── ui/                   # All UI subsystems
+│   ├── ui-manager.ts     # UIManager (@pixi/ui helpers)
+│   ├── modal/            # BaseModal, ModalManager
+│   ├── alert/            # AlertManager (promise-based alerts)
+│   ├── toast/            # ToastManager (themed notifications)
+│   └── index.ts          # Umbrella barrel
+├── animations/           # CountAnimator, presets
+├── utils/                # Logger
+└── index.ts              # Barrel exports (public API)
 ```
+
+Every subdirectory has a barrel `index.ts`; the root `src/index.ts` re-exports only from barrels.
 
 ## Key Dependencies
 

@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import gsap from 'gsap';
-import { Game } from '../core/game';
+import { Game } from '../../core/game';
 import type { ToastColorSet, ToastTheme, ToastThemePreset } from './toast-theme';
 import { TOAST_PRESETS, getDefaultColors } from './toast-presets';
 

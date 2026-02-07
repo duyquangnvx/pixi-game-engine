@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import gsap from 'gsap';
-import { Game } from '../core/game';
-import { Signal } from '../signals/signal';
+import { Game } from '../../core/game';
+import { Signal } from '../../core/signal';
 
 export type ModalAnimation = 'fade' | 'scale' | 'slide' | 'none';
 export type CloseButtonPosition = 'top-right' | 'top-left';

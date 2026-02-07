@@ -30,6 +30,7 @@
     "pixi.js": "^7.4.2"
   },
   "devDependencies": {
+    "typescript": "^5.9.3",
     "vite": "^6.0.6",
     "vite-plugin-dts": "^4.3.0"
   },
