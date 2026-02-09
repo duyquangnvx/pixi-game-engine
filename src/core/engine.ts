@@ -29,7 +29,7 @@ export interface EngineConfig {
 }
 
 export class Engine {
-    private constructor() {}
+    private constructor() { }
 
     private static _app: PIXI.Application;
     private static _scenes: SceneManager;
@@ -343,6 +343,7 @@ export class Engine {
         // Reset PIXI.Assets singleton so it can be re-initialized
         // (important for React StrictMode double-mount or hot reload)
         PIXI.Assets.reset();
+        PIXI.Cache.reset();
 
         Engine._isRunning = false;
         Engine._initialized = false;
