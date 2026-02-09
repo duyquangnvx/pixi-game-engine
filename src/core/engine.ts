@@ -339,6 +339,11 @@ export class Engine {
         Engine.onFocusChange.clear();
         Engine.onSceneChange.clear();
         Engine._app.destroy(true, { children: true, texture: true });
+
+        // Reset PIXI.Assets singleton so it can be re-initialized
+        // (important for React StrictMode double-mount or hot reload)
+        PIXI.Assets.reset();
+
         Engine._isRunning = false;
         Engine._initialized = false;
     }
