@@ -2,7 +2,12 @@ import * as PIXI from 'pixi.js';
 // Import pixi-spine to register its asset loaders with PIXI.Assets
 // Main bundle includes Spine 3.7, 3.8, and 4.0 runtimes
 import 'pixi-spine';
-import { type ISkeletonData, Spine } from 'pixi-spine';
+import { type ISkeletonData, Spine, type IAnimationStateListener } from 'pixi-spine';
+
+// pixi-spine ITrackEntry omits `animation` but the runtime exposes it
+interface TrackEntryWithAnimation {
+    animation?: { name: string };
+}
 
 export class SpineManager {
     /** Create a Spine animation from loaded skeleton data */
@@ -22,14 +27,42 @@ export class SpineManager {
         return new Spine(skeletonData);
     }
 
-    /** Play an animation on a Spine instance */
+    /** Play an animation on a Spine instance.
+     *  By default skips if the same animation is already playing (avoids restart).
+     *  Pass `force: true` to restart from frame 0. */
     public play(
         spine: Spine,
         animationName: string,
         loop: boolean = true,
-        trackIndex: number = 0
+        trackIndex: number = 0,
+        options?: { force?: boolean }
     ): void {
+        if (!options?.force) {
+            const current = spine.state.tracks[trackIndex] as TrackEntryWithAnimation | null;
+            if (current?.animation?.name === animationName) return;
+        }
         spine.state.setAnimation(trackIndex, animationName, loop);
+    }
+
+    /** Play a non-looping animation and resolve when it completes. */
+    public playOnce(
+        spine: Spine,
+        animationName: string,
+        trackIndex: number = 0
+    ): Promise<void> {
+        return new Promise<void>((resolve) => {
+            spine.state.setAnimation(trackIndex, animationName, false);
+            const listener: IAnimationStateListener = {
+                complete: (entry) => {
+                    const track = entry as TrackEntryWithAnimation;
+                    if (track.animation?.name === animationName) {
+                        spine.state.removeListener(listener);
+                        resolve();
+                    }
+                },
+            };
+            spine.state.addListener(listener);
+        });
     }
 
     /** Add an animation to the queue */
@@ -82,5 +115,12 @@ export class SpineManager {
     /** Set animation speed */
     public setSpeed(spine: Spine, speed: number): void {
         spine.state.timeScale = speed;
+    }
+
+    /** Clear tracks, remove listeners, and destroy the spine instance. */
+    public destroy(spine: Spine): void {
+        spine.state.clearTracks();
+        spine.state.clearListeners();
+        spine.destroy({ children: true });
     }
 }
