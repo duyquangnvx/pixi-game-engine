@@ -1,4 +1,4 @@
-import { type Sound, sound, type IMediaInstance } from '@pixi/sound';
+import { type Sound, type CompleteCallback, sound, type IMediaInstance } from '@pixi/sound';
 import { Logger } from '../utils/logger';
 
 export interface SoundOptions {
@@ -7,6 +7,8 @@ export interface SoundOptions {
     speed?: number;
     /** Fade in duration in seconds */
     fadeIn?: number;
+    /** Called when playback finishes */
+    complete?: CompleteCallback;
 }
 
 export interface MusicOptions extends SoundOptions {
@@ -93,6 +95,7 @@ export class SoundManager {
             volume: options.fadeIn ? 0 : effectiveVolume,
             loop: options.loop ?? false,
             speed: options.speed ?? 1,
+            complete: options.complete,
         }) as IMediaInstance;
 
         // Track instance
@@ -161,6 +164,7 @@ export class SoundManager {
             volume: crossfade > 0 ? 0 : targetVolume,
             loop: options.loop ?? true,
             speed: options.speed ?? 1,
+            complete: options.complete,
         }) as IMediaInstance;
 
         this.currentMusic = snd;
