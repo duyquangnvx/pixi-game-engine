@@ -1,0 +1,124 @@
+import { tween, easeLinear } from "./transition";
+import { BaseScene, type SceneConstructor } from "./scene";
+import type {
+  FrameInfo,
+  GoOptions,
+  SceneContext,
+  SceneManagerHost,
+  SceneStackEntry,
+  Transition
+} from "./types";
+
+export class SceneManager {
+  private readonly registry = new Map<string, SceneConstructor>();
+  private stack: SceneStackEntry[] = [];
+  private readonly ticks = new Map<BaseScene, (frame: FrameInfo) => void>();
+  private readonly listeners = new Set<() => void>();
+
+  constructor(
+    private readonly host: SceneManagerHost,
+    private readonly onError: (error: unknown) => void = () => undefined
+  ) {}
+
+  register(ctor: SceneConstructor): void {
+    this.registry.set(ctor.key, ctor);
+  }
+
+  get current(): BaseScene | null {
+    return this.stack[this.stack.length - 1]?.instance ?? null;
+  }
+
+  getStack = (): readonly SceneStackEntry[] => this.stack;
+
+  subscribe = (listener: () => void): (() => void) => {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  };
+
+  async go(key: string, opt: GoOptions = {}): Promise<BaseScene> {
+    const entry = await this.enter(key, opt);
+    const prev = this.stack[this.stack.length - 1] ?? null;
+    const transition = opt.transition ?? { type: "none" };
+
+    if (prev && transition.type === "fade") {
+      await this.fade(transition, (p) => {
+        prev.instance.world.alpha = 1 - p;
+        this.host.uiRoot.style.opacity = String(1 - p);
+      });
+    }
+
+    if (prev) this.teardown(prev);
+    this.stack = [entry];
+    this.commit();
+
+    if (transition.type === "fade") {
+      entry.instance.world.alpha = 0;
+      await this.fade(transition, (p) => {
+        entry.instance.world.alpha = p;
+        this.host.uiRoot.style.opacity = String(p);
+      });
+    } else {
+      entry.instance.world.alpha = 1;
+      this.host.uiRoot.style.opacity = "1";
+    }
+    return entry.instance;
+  }
+
+  async push(key: string, opt: GoOptions = {}): Promise<BaseScene> {
+    const entry = await this.enter(key, opt);
+    const transition = opt.transition ?? { type: "none" };
+    this.stack = [...this.stack, entry];
+    this.commit();
+    if (transition.type === "fade") {
+      entry.instance.world.alpha = 0;
+      await this.fade(transition, (p) => { entry.instance.world.alpha = p; });
+    }
+    return entry.instance;
+  }
+
+  pop(): void {
+    if (this.stack.length <= 1) return;
+    const top = this.stack[this.stack.length - 1];
+    if (!top) return;
+    this.teardown(top);
+    this.stack = this.stack.slice(0, -1);
+    this.commit();
+  }
+
+  private async enter(key: string, opt: GoOptions): Promise<SceneStackEntry> {
+    const Ctor = this.registry.get(key);
+    if (!Ctor) throw new Error(`Scene "${key}" is not registered`);
+    const ctx: SceneContext = { services: this.host.services, store: this.host.bridge.store };
+    const instance = new Ctor(ctx);
+    await instance.onPreload(this.host.loader, Ctor.assets);
+    this.host.stage.addChild(instance.world);
+    instance.onCreate(opt.data);
+    const tick = (frame: FrameInfo): void => instance.onUpdate(frame.deltaTime);
+    this.host.ticker.add(tick);
+    this.ticks.set(instance, tick);
+    const entry: SceneStackEntry = { key, data: opt.data, instance };
+    if (Ctor.Screen !== undefined) entry.Screen = Ctor.Screen;
+    return entry;
+  }
+
+  private teardown(entry: SceneStackEntry): void {
+    const tick = this.ticks.get(entry.instance);
+    if (tick) {
+      this.host.ticker.remove(tick);
+      this.ticks.delete(entry.instance);
+    }
+    entry.instance.world.removeFromParent();
+    entry.instance._runDestroy(this.onError);
+  }
+
+  private commit(): void {
+    this.host.bridge.setRoute(this.stack.map((e) => ({ scene: e.key, data: e.data })));
+    for (const listener of this.listeners) listener();
+  }
+
+  private fade(transition: Extract<Transition, { type: "fade" }>, onProgress: (p: number) => void): Promise<void> {
+    return tween(this.host.ticker, transition.duration, easeLinear, onProgress);
+  }
+}

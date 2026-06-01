@@ -68,3 +68,22 @@ export interface GoOptions {
 // Forward type-only reference; concrete class lives in scene.ts.
 import type { BaseScene } from "./scene";
 export type { BaseScene };
+
+import type { Bridge } from "./bridge";
+import type { AssetLoader } from "./asset-loader";
+
+export interface SceneStackEntry {
+  key: string;
+  data: unknown;
+  Screen?: import("react").ComponentType<SceneScreenProps>;
+  instance: BaseScene;
+}
+
+export interface SceneManagerHost {
+  readonly stage: Container;
+  readonly ticker: TickerLike;
+  readonly uiRoot: HTMLElement;
+  readonly bridge: Bridge;
+  readonly loader: AssetLoader;
+  readonly services: ServiceRegistry;
+}
