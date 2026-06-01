@@ -34,6 +34,10 @@ describe("BaseScene", () => {
     scene.onCreate({ level: 1 });
     expect(scene.createdWith).toEqual({ level: 1 });
     expect(scene.world.children.length).toBe(1);
+
+    const child = scene.world.children[0];
+    scene._runDestroy(() => undefined);
+    expect(child?.destroyed).toBe(true);
   });
 
   it("_runDestroy runs disposers in reverse order, then onDestroy", () => {

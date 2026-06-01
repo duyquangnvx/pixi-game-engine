@@ -46,8 +46,16 @@ export abstract class BaseScene<Data = unknown> {
       }
     }
     this.disposers.length = 0;
-    this.world.destroy({ children: true });
-    this.onDestroy();
+    try {
+      this.world.destroy({ children: true });
+    } catch (error: unknown) {
+      onError(error);
+    }
+    try {
+      this.onDestroy();
+    } catch (error: unknown) {
+      onError(error);
+    }
   }
 }
 
