@@ -1,4 +1,4 @@
-import type { Viewport } from "../types";
+import type { Viewport } from "../viewport";
 import type {
   ActionEvent,
   AxisBinding,

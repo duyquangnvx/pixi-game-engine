@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { createBridge } from "./bridge";
 
-declare module "./types" {
+declare module "./scene-contract" {
   interface CommandMap {
     noop: { type: "noop" };
   }

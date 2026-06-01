@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { easeLinear, easeInOutQuad, tween } from "./transition";
-import type { FrameInfo } from "./types";
+import type { FrameInfo } from "./scheduler";
 
 /** Fake ticker: records the callback so the test can drive frames manually. */
 function makeFakeTicker() {

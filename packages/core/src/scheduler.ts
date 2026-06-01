@@ -1,4 +1,26 @@
-import type { FrameInfo, FrameLoop, ScheduleHandle, TickerLike } from "./types";
+/** Per-frame info; PixiJS Ticker satisfies this structurally. */
+export interface FrameInfo {
+  readonly deltaTime: number;
+  readonly deltaMS: number;
+}
+
+/** Minimal ticker surface used by core; `app.ticker` satisfies it. */
+export interface TickerLike {
+  add(fn: (frame: FrameInfo) => void): unknown;
+  remove(fn: (frame: FrameInfo) => void): unknown;
+}
+
+/** Cancels a scheduled timer or interval. */
+export interface ScheduleHandle {
+  cancel(): void;
+}
+
+/** Ticker-driven scheduler; see `createFrameLoop`. */
+export interface FrameLoop {
+  timer(ms: number, fn: () => void): ScheduleHandle;
+  interval(ms: number, fn: () => void): ScheduleHandle;
+  destroy(): void;
+}
 
 function toError(error: unknown): Error {
   return error instanceof Error ? error : new Error(String(error));

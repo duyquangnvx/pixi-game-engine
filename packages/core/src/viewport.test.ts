@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createViewport } from "./viewport";
-import type { ViewState } from "./types";
+import type { ViewState } from "./viewport";
 
 const state = (over: Partial<ViewState> = {}): ViewState => ({
   scale: 1,

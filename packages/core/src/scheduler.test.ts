@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { createFrameLoop, emptyFrameLoop } from "./scheduler";
-import type { FrameInfo, TickerLike } from "./types";
+import type { FrameInfo, TickerLike } from "./scheduler";
 
 function fakeTicker() {
   const fns = new Set<(f: FrameInfo) => void>();

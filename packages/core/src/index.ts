@@ -7,24 +7,17 @@ export { createInputRuntime, emptyInputRuntime } from "./input/runtime";
 export { createViewport } from "./viewport";
 export { tween, easeLinear, easeInOutQuad, type Ease } from "./transition";
 
+export type { FrameInfo, TickerLike, FrameLoop, ScheduleHandle } from "./scheduler";
+export type { ViewFit, Orientation, ViewConfig, ViewState, Viewport } from "./viewport";
 export type {
-  GameState,
-  Command,
-  CommandMap,
   RouteEntry,
-  ViewConfig,
-  ViewFit,
-  ViewState,
-  Viewport,
-  Transition,
-  GoOptions,
+  GameState,
+  CommandMap,
+  Command,
   SceneContext,
-  TickerLike,
-  FrameInfo,
-  FrameLoop,
-  ScheduleHandle,
-  Orientation
-} from "./types";
+  Transition,
+  GoOptions
+} from "./scene-contract";
 export type {
   InputActions,
   InputBinding,

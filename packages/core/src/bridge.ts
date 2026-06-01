@@ -1,5 +1,5 @@
 import { createStore, type Store } from "./store";
-import type { Command, GameState, RouteEntry } from "./types";
+import type { Command, GameState, RouteEntry } from "./scene-contract";
 
 export interface Bridge {
   store: Store<GameState>;

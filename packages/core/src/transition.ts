@@ -1,4 +1,4 @@
-import type { FrameInfo, TickerLike } from "./types";
+import type { FrameInfo, TickerLike } from "./scheduler";
 
 export type Ease = (t: number) => number;
 
