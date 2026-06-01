@@ -3,13 +3,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "typecheck": "tsc -b --pretty packages/core apps/demo",
+    "typecheck": "tsc -b --pretty packages/core packages/pixi packages/react apps/demo",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:types": "vitest run --typecheck.only",
     "coverage": "vitest run --coverage",
-    "depcruise": "depcruise packages/core/src --config .dependency-cruiser.cjs",
+    "depcruise": "depcruise packages/core/src packages/pixi/src packages/react/src --config .dependency-cruiser.cjs",
     "dev": "pnpm --filter @studio/demo dev",
-    "build": "pnpm --filter @studio/core build && pnpm --filter @studio/demo build"
+    "build": "tsc -b packages/react && pnpm --filter @studio/demo build"
   },
   "devDependencies": {
     "@testing-library/react": "^16.1.0",
