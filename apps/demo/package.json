@@ -1,0 +1,13 @@
+{
+  "name": "@studio/demo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": { "dev": "vite", "build": "vite build", "preview": "vite preview" },
+  "dependencies": {
+    "@studio/core": "workspace:*",
+    "pixi.js": "^8.6.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "pixi-game-engine",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -b --pretty packages/core apps/demo",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "depcruise": "depcruise packages/core/src --config .dependency-cruiser.cjs",
+    "dev": "pnpm --filter @studio/demo dev",
+    "build": "pnpm --filter @studio/core build && pnpm --filter @studio/demo build"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.1.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/coverage-v8": "^2.1.8",
+    "dependency-cruiser": "^16.8.0",
+    "jsdom": "^25.0.1",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5",
+    "vitest": "^2.1.8"
+  }
+}
