@@ -36,7 +36,8 @@ const viewport = createViewport(() => ({
   offsetX: 100,
   offsetY: 50,
   design: { width: 1280, height: 720 },
-  css: { width: 2660, height: 1490 }
+  css: { width: 2660, height: 1490 },
+  orientation: "landscape"
 }));
 
 const noop = () => undefined;

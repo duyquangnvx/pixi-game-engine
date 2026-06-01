@@ -29,7 +29,7 @@ function fakeGame(): Game {
     stage: new Container(),
     ticker: { add: (fn) => { ticks.add(fn); }, remove: (fn) => { ticks.delete(fn); } },
     uiRoot: document.createElement("div"),
-    viewport: createViewport(() => ({ scale: 1, offsetX: 0, offsetY: 0, design: { width: 1280, height: 720 }, css: { width: 1280, height: 720 } })),
+    viewport: createViewport(() => ({ scale: 1, offsetX: 0, offsetY: 0, design: { width: 1280, height: 720 }, css: { width: 1280, height: 720 }, orientation: "landscape" })),
     input: emptyInputRuntime(),
     scheduler: emptyFrameLoop(),
     bridge: createBridge({}),

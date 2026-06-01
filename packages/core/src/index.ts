@@ -9,6 +9,7 @@ export { hotReplaceScene } from "./pixi/hmr";
 export { applyView, fit } from "./pixi/view";
 export { defineInput } from "./input/define-input";
 export { createFrameLoop } from "./scheduler";
+export { tryLockOrientation } from "./pixi/orientation";
 export { tween, easeLinear, easeInOutQuad, type Ease } from "./transition";
 export { GameProvider } from "./react/GameProvider";
 export { Overlay } from "./react/Overlay";
@@ -34,7 +35,8 @@ export type {
   TickerLike,
   FrameInfo,
   FrameLoop,
-  ScheduleHandle
+  ScheduleHandle,
+  Orientation
 } from "./types";
 export type {
   InputActions,

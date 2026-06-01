@@ -16,6 +16,9 @@ export function createViewport(read: () => ViewState): Viewport {
     get css() {
       return read().css;
     },
+    get orientation() {
+      return read().orientation;
+    },
     viewportToDesign(x, y) {
       const { scale, offsetX, offsetY } = read();
       return { x: (x - offsetX) / scale, y: (y - offsetY) / scale };

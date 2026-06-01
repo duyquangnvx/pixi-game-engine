@@ -13,7 +13,8 @@ const identityViewport = createViewport(() => ({
   offsetX: 0,
   offsetY: 0,
   design: { width: 1280, height: 720 },
-  css: { width: 1280, height: 720 }
+  css: { width: 1280, height: 720 },
+  orientation: "landscape"
 }));
 
 function ctx(): SceneContext {

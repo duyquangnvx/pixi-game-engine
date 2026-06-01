@@ -14,6 +14,7 @@ export default defineConfig({
         "packages/core/src/game.ts",
         "packages/core/src/pixi/view.ts",
         "packages/core/src/pixi/input-source.ts",
+        "packages/core/src/pixi/dev-fps.ts",
         "packages/core/src/react/mount.tsx",
         "packages/core/src/react/styles.ts",
         "packages/core/src/**/*.test.*"

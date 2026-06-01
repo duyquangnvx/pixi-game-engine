@@ -66,10 +66,14 @@ export interface SceneContext {
 
 export type ViewFit = "contain" | "cover";
 
+export type Orientation = "portrait" | "landscape";
+
 export interface ViewConfig {
   design: readonly [number, number];
   fit?: ViewFit;
   background?: string;
+  /** Orientation to attempt locking on start (best-effort; ignored where unsupported). */
+  orientation?: Orientation;
 }
 
 /**
@@ -82,6 +86,7 @@ export interface ViewState {
   readonly offsetY: number;
   readonly design: Readonly<{ width: number; height: number }>;
   readonly css: Readonly<{ width: number; height: number }>;
+  readonly orientation: Orientation;
 }
 
 /**
@@ -92,6 +97,7 @@ export interface Viewport {
   readonly scale: number;
   readonly design: Readonly<{ width: number; height: number }>;
   readonly css: Readonly<{ width: number; height: number }>;
+  readonly orientation: Orientation;
   viewportToDesign(x: number, y: number): { x: number; y: number };
   designToViewport(x: number, y: number): { x: number; y: number };
 }
@@ -152,4 +158,5 @@ export interface GameConfig {
   manifest?: string;
   plugins?: GamePlugin[];
   hooks?: GameHooks;
+  dev?: { fps?: boolean };
 }

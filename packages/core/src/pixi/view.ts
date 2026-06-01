@@ -1,10 +1,19 @@
 import type { Application } from "pixi.js";
-import type { ViewConfig, ViewFit, ViewState, Viewport } from "../types";
+import type { Orientation, ViewConfig, ViewFit, ViewState, Viewport } from "../types";
 import { createViewport } from "./viewport";
 
 export interface ViewHandle {
   readonly viewport: Viewport;
   dispose(): void;
+}
+
+const portraitQuery = (): MediaQueryList | null =>
+  typeof window !== "undefined" && typeof window.matchMedia === "function"
+    ? window.matchMedia("(orientation: portrait)")
+    : null;
+
+function detectOrientation(): Orientation {
+  return portraitQuery()?.matches ? "portrait" : "landscape";
 }
 
 export function fit(
@@ -37,7 +46,8 @@ export function applyView(
   uiRoot.style.width = `${designW}px`;
   uiRoot.style.height = `${designH}px`;
 
-  let state: ViewState = { scale: 1, offsetX: 0, offsetY: 0, design, css: { width: 0, height: 0 } };
+  let orientation: Orientation = detectOrientation();
+  let state: ViewState = { scale: 1, offsetX: 0, offsetY: 0, design, css: { width: 0, height: 0 }, orientation };
   const viewport = createViewport(() => state);
 
   const layout = (): void => {
@@ -46,7 +56,7 @@ export function applyView(
     const scale = fit(designW, designH, boxW, boxH, mode);
     const tx = (boxW - designW * scale) / 2;
     const ty = (boxH - designH * scale) / 2;
-    state = { scale, offsetX: tx, offsetY: ty, design, css: { width: boxW, height: boxH } };
+    state = { scale, offsetX: tx, offsetY: ty, design, css: { width: boxW, height: boxH }, orientation };
     uiRoot.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
     app.stage.scale.set(scale);
     app.stage.position.set(tx, ty);
@@ -54,10 +64,25 @@ export function applyView(
 
   layout();
 
+  const mql = portraitQuery();
+  const onOrient = (e: MediaQueryListEvent): void => {
+    orientation = e.matches ? "portrait" : "landscape";
+    layout();
+  };
+  mql?.addEventListener("change", onOrient);
+
+  const dispose = (): void => mql?.removeEventListener("change", onOrient);
+
   if (typeof ResizeObserver === "undefined") {
-    return { viewport, dispose: () => undefined };
+    return { viewport, dispose };
   }
   const observer = new ResizeObserver(() => layout());
   observer.observe(mount);
-  return { viewport, dispose: () => observer.disconnect() };
+  return {
+    viewport,
+    dispose: () => {
+      observer.disconnect();
+      dispose();
+    }
+  };
 }

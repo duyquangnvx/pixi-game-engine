@@ -9,6 +9,8 @@ import { applyView, type ViewHandle } from "./pixi/view";
 import { createDomInputSource } from "./pixi/input-source";
 import { createInputRuntime, emptyInputRuntime } from "./input/runtime";
 import { createFrameLoop, emptyFrameLoop } from "./scheduler";
+import { mountDevFps } from "./pixi/dev-fps";
+import { tryLockOrientation } from "./pixi/orientation";
 import { mountOverlay } from "./react/mount";
 import { injectBaseStyles } from "./react/styles";
 import type { InputRuntime } from "./input/types";
@@ -27,6 +29,7 @@ export class Game {
   private viewHandle: ViewHandle | null = null;
   private inputRuntime: InputRuntime = emptyInputRuntime();
   private frameLoop: FrameLoop = emptyFrameLoop();
+  private disposeDevFps: (() => void) | null = null;
   private started = false;
 
   constructor(config: GameConfig) {
@@ -95,6 +98,9 @@ export class Game {
       });
     }
 
+    if (this.config.dev?.fps) this.disposeDevFps = mountDevFps(this.app.ticker, mount);
+    if (this.config.view.orientation) void tryLockOrientation(this.config.view.orientation);
+
     if (this.config.manifest) await this.loader.init(this.config.manifest);
 
     this.reactRoot = mountOverlay(uiRoot, this);
@@ -110,6 +116,7 @@ export class Game {
     this.scenes.destroyAll();
     this.inputRuntime.destroy();
     this.frameLoop.destroy();
+    this.disposeDevFps?.();
     this.viewHandle?.dispose();
     this.reactRoot?.unmount();
     this.app.destroy(true, { children: true });

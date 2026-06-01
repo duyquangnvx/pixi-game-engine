@@ -12,7 +12,8 @@ const game = createGame({
   initialScene: "Boot",
   initialState: { hud: { coins: 0 } },
   scenes: [BootScene, MenuScene, GameScene, PauseScene],
-  input
+  input,
+  dev: { fps: true }
 });
 
 game.bridge.onCommand((cmd) => {

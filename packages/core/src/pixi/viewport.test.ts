@@ -8,6 +8,7 @@ const state = (over: Partial<ViewState> = {}): ViewState => ({
   offsetY: 0,
   design: { width: 1280, height: 720 },
   css: { width: 1280, height: 720 },
+  orientation: "landscape",
   ...over
 });
 
@@ -36,10 +37,11 @@ describe("createViewport", () => {
     expect(vp.scale).toBe(2);
   });
 
-  it("exposes the current design and css sizes", () => {
-    const vp = createViewport(() => state({ css: { width: 1900, height: 1000 } }));
+  it("exposes the current design, css sizes, and orientation", () => {
+    const vp = createViewport(() => state({ css: { width: 1900, height: 1000 }, orientation: "portrait" }));
 
     expect(vp.design).toEqual({ width: 1280, height: 720 });
     expect(vp.css).toEqual({ width: 1900, height: 1000 });
+    expect(vp.orientation).toBe("portrait");
   });
 });
