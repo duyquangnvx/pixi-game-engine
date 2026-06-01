@@ -2,7 +2,7 @@ import type { Container } from "pixi.js";
 import type { ComponentType } from "react";
 import type { Store } from "./store";
 import type { ServiceRegistry } from "./services";
-import type { InputMapDef, InputRuntime } from "./input/types";
+import type { InputRuntime } from "./input/types";
 
 /** Per-frame info; PixiJS Ticker satisfies this structurally. */
 export interface FrameInfo {
@@ -137,26 +137,3 @@ export interface SceneManagerHost {
   readonly services: ServiceRegistry;
 }
 
-import type { SceneConstructor } from "./pixi/scene";
-
-export interface GamePlugin {
-  install(game: import("./game").Game): void | Promise<void>;
-}
-
-export interface GameHooks {
-  onReady?(game: import("./game").Game): void | Promise<void>;
-  onError?(error: unknown): void;
-}
-
-export interface GameConfig {
-  mount?: string;
-  view: ViewConfig;
-  initialScene: string;
-  initialState: Omit<GameState, "route">;
-  scenes: SceneConstructor[];
-  input?: InputMapDef;
-  manifest?: string;
-  plugins?: GamePlugin[];
-  hooks?: GameHooks;
-  dev?: { fps?: boolean };
-}

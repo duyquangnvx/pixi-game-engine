@@ -1,5 +1,5 @@
 import { createContext, useContext, type ReactNode } from "react";
-import type { Game } from "../game";
+import type { Game } from "./game";
 
 const GameContext = createContext<Game | null>(null);
 

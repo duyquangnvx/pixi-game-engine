@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createGame } from "./game";
-import { BaseScene } from "./pixi/scene";
+import { BaseScene } from "@studio/core";
 
 class Boot extends BaseScene {
   static override key = "Boot";

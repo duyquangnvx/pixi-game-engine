@@ -1,5 +1,5 @@
 import "./commands";
-import { createGame } from "@studio/core";
+import { createGame } from "@studio/react";
 import { input } from "./input";
 import { BootScene } from "./scenes/boot/scene";
 import { MenuScene } from "./scenes/menu/scene";

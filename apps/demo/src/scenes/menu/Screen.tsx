@@ -1,4 +1,4 @@
-import { useGame } from "@studio/core";
+import { useGame } from "@studio/react";
 import type { ReactNode } from "react";
 
 export function MenuScreen(): ReactNode {

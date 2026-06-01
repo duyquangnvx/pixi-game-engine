@@ -1,6 +1,6 @@
 import { useCallback, useRef, useSyncExternalStore } from "react";
 import { useGame } from "./GameProvider";
-import type { BaseScene, GameState, SceneStackEntry } from "../types";
+import type { BaseScene, GameState, SceneStackEntry } from "@studio/core";
 
 const NO_VALUE = Symbol("no-value");
 

@@ -1,20 +1,29 @@
 import { Application } from "pixi.js";
 import type { Root } from "react-dom/client";
-import { createBridge, type Bridge } from "./bridge";
-import { ServiceRegistry } from "./services";
-import { AssetLoader } from "./pixi/asset-loader";
-import { SceneManager } from "./pixi/scene-manager";
-import { registerGame, unregisterGame } from "./pixi/hmr";
-import { applyView, type ViewHandle } from "./pixi/view";
-import { createDomInputSource } from "./pixi/input-source";
-import { createInputRuntime, emptyInputRuntime } from "./input/runtime";
-import { createFrameLoop, emptyFrameLoop } from "./scheduler";
-import { mountDevFps } from "./pixi/dev-fps";
-import { tryLockOrientation } from "./pixi/orientation";
-import { mountOverlay } from "./react/mount";
-import { injectBaseStyles } from "./react/styles";
-import type { InputRuntime } from "./input/types";
-import type { FrameLoop, GameConfig, SceneManagerHost } from "./types";
+import {
+  createBridge,
+  type Bridge,
+  ServiceRegistry,
+  AssetLoader,
+  SceneManager,
+  registerGame,
+  unregisterGame,
+  applyView,
+  type ViewHandle,
+  createDomInputSource,
+  createInputRuntime,
+  emptyInputRuntime,
+  createFrameLoop,
+  emptyFrameLoop,
+  mountDevFps,
+  tryLockOrientation,
+  type InputRuntime,
+  type FrameLoop,
+  type SceneManagerHost
+} from "@studio/core";
+import { mountOverlay } from "./mount";
+import { injectBaseStyles } from "./styles";
+import type { GameConfig } from "./config";
 
 export class Game {
   readonly config: Readonly<GameConfig>;

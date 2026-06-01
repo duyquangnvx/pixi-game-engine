@@ -1,4 +1,3 @@
-export { createGame, Game } from "./game";
 export { BaseScene, type SceneConstructor } from "./pixi/scene";
 export { SceneManager } from "./pixi/scene-manager";
 export { createBridge, type Bridge } from "./bridge";
@@ -11,13 +10,19 @@ export { defineInput } from "./input/define-input";
 export { createFrameLoop } from "./scheduler";
 export { tryLockOrientation } from "./pixi/orientation";
 export { tween, easeLinear, easeInOutQuad, type Ease } from "./transition";
-export { GameProvider } from "./react/GameProvider";
-export { Overlay } from "./react/Overlay";
-export { useGame, useStore, useScene, useSceneStack } from "./react/hooks";
+
+// Test-support / null-object helpers + symbols the extracted game.ts needs.
+// The Pixi-layer symbols below are TEMPORARY here (Pixi is still nested in
+// core this step) and relocate to @studio/pixi's barrel in Task 3.
+export { createViewport } from "./pixi/viewport";
+export { emptyFrameLoop } from "./scheduler";
+export { createInputRuntime, emptyInputRuntime } from "./input/runtime";
+export { registerGame, unregisterGame } from "./pixi/hmr";
+export { createDomInputSource } from "./pixi/input-source";
+export { mountDevFps } from "./pixi/dev-fps";
+export { type ViewHandle } from "./pixi/view";
+
 export type {
-  GameConfig,
-  GameHooks,
-  GamePlugin,
   GameState,
   Command,
   CommandMap,

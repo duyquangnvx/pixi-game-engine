@@ -1,4 +1,4 @@
-import { useGame, useStore } from "@studio/core";
+import { useGame, useStore } from "@studio/react";
 import type { ReactNode } from "react";
 
 export function GameHud(): ReactNode {
