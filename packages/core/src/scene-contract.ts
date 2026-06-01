@@ -20,7 +20,7 @@ export interface GameState {
 
 /**
  * Command registry: maps a command name to a handler signature
- * `(args) => result`. Games augment it via declaration merging, so `dispatch`
+ * `(args) => result`. Games augment it via declaration merging, so `invoke`
  * and `handle` are checked against one source of truth:
  *
  * ```ts
@@ -32,7 +32,7 @@ export interface GameState {
  * }
  * ```
  *
- * A command resolves to its (awaited) return type, so dispatch is two-way.
+ * A command resolves to its (awaited) return type, so invoke is two-way.
  * Use `() => void` for fire-and-forget commands.
  */
 export interface Commands {}

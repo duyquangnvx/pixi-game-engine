@@ -17,26 +17,26 @@ describe("createBridge", () => {
   it("routes a command to its handler and returns the typed result", async () => {
     const bridge = createBridge({});
     bridge.handle("math:double", ({ value }) => value * 2);
-    const result = await bridge.dispatch("math:double", { value: 21 });
+    const result = await bridge.invoke("math:double", { value: 21 });
     expect(result).toBe(42);
   });
 
   it("awaits an async handler before resolving", async () => {
     const bridge = createBridge({});
     bridge.handle("math:double", async ({ value }) => value * 2);
-    await expect(bridge.dispatch("math:double", { value: 4 })).resolves.toBe(8);
+    await expect(bridge.invoke("math:double", { value: 4 })).resolves.toBe(8);
   });
 
   it("rejects when no handler is registered for the command", async () => {
     const bridge = createBridge({});
-    await expect(bridge.dispatch("noop")).rejects.toThrow(/no handler registered/i);
+    await expect(bridge.invoke("noop")).rejects.toThrow(/no handler registered/i);
   });
 
   it("stops routing after the handle disposer runs", async () => {
     const bridge = createBridge({});
     const off = bridge.handle("noop", () => {});
     off();
-    await expect(bridge.dispatch("noop")).rejects.toThrow();
+    await expect(bridge.invoke("noop")).rejects.toThrow();
   });
 
   it("setRoute replaces the route stack in the store", () => {

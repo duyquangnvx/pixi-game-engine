@@ -10,7 +10,7 @@ import type {
 
 export interface Bridge {
   store: Store<GameState>;
-  dispatch<K extends CommandName>(name: K, ...args: CommandArgs<K>): Promise<CommandResult<K>>;
+  invoke<K extends CommandName>(name: K, ...args: CommandArgs<K>): Promise<CommandResult<K>>;
   handle<K extends CommandName>(name: K, handler: CommandHandler<K>): () => void;
   setRoute(stack: ReadonlyArray<RouteEntry>): void;
 }
@@ -23,7 +23,7 @@ export function createBridge(initial: Omit<GameState, "route">): Bridge {
 
   return {
     store,
-    dispatch: async <K extends CommandName>(
+    invoke: async <K extends CommandName>(
       name: K,
       ...args: CommandArgs<K>
     ): Promise<CommandResult<K>> => {
