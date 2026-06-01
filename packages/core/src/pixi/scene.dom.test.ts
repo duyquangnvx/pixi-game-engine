@@ -4,6 +4,7 @@ import { createStore } from "../store";
 import { ServiceRegistry } from "../services";
 import { BaseScene } from "./scene";
 import { createViewport } from "./viewport";
+import { emptyInputRuntime } from "../input/runtime";
 import type { GameState, SceneContext } from "../types";
 
 const identityViewport = createViewport(() => ({
@@ -15,7 +16,12 @@ const identityViewport = createViewport(() => ({
 }));
 
 function ctx(): SceneContext {
-  return { services: new ServiceRegistry(), store: createStore<GameState>({ route: [] }), viewport: identityViewport };
+  return {
+    services: new ServiceRegistry(),
+    store: createStore<GameState>({ route: [] }),
+    viewport: identityViewport,
+    input: emptyInputRuntime()
+  };
 }
 
 class TestScene extends BaseScene {

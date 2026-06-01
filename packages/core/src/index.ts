@@ -7,6 +7,7 @@ export { ServiceRegistry, type ServiceKey } from "./services";
 export { AssetLoader } from "./pixi/asset-loader";
 export { hotReplaceScene } from "./pixi/hmr";
 export { applyView, fit } from "./pixi/view";
+export { defineInput } from "./input/define-input";
 export { tween, easeLinear, easeInOutQuad, type Ease } from "./transition";
 export { GameProvider } from "./react/GameProvider";
 export { Overlay } from "./react/Overlay";
@@ -32,3 +33,18 @@ export type {
   TickerLike,
   FrameInfo
 } from "./types";
+export type {
+  InputActions,
+  InputBinding,
+  InputMapDef,
+  InputFacade,
+  InputRuntime,
+  InferInputActions,
+  KeyCode,
+  ButtonBinding,
+  AxisBinding,
+  ActionEvent,
+  AxisValue,
+  ButtonName,
+  AxisName
+} from "./input/types";

@@ -1,5 +1,6 @@
 import "./commands";
 import { createGame } from "@studio/core";
+import { input } from "./input";
 import { BootScene } from "./scenes/boot/scene";
 import { MenuScene } from "./scenes/menu/scene";
 import { GameScene } from "./scenes/game/scene";
@@ -10,7 +11,8 @@ const game = createGame({
   view: { design: [1280, 720], fit: "contain", background: "#1a1a2e" },
   initialScene: "Boot",
   initialState: { hud: { coins: 0 } },
-  scenes: [BootScene, MenuScene, GameScene, PauseScene]
+  scenes: [BootScene, MenuScene, GameScene, PauseScene],
+  input
 });
 
 game.bridge.onCommand((cmd) => {

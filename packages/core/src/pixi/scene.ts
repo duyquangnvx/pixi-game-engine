@@ -1,6 +1,7 @@
 import { Container } from "pixi.js";
 import type { ComponentType } from "react";
 import type { AssetLoader } from "./asset-loader";
+import type { InputFacade } from "../input/types";
 import type { SceneContext, SceneScreenProps } from "../types";
 
 export abstract class BaseScene<Data = unknown> {
@@ -12,6 +13,7 @@ export abstract class BaseScene<Data = unknown> {
   protected readonly services: SceneContext["services"];
   protected readonly store: SceneContext["store"];
   protected readonly view: SceneContext["viewport"];
+  protected readonly input: InputFacade;
 
   private readonly disposers: Array<() => void> = [];
 
@@ -19,6 +21,7 @@ export abstract class BaseScene<Data = unknown> {
     this.services = ctx.services;
     this.store = ctx.store;
     this.view = ctx.viewport;
+    this.input = ctx.input.facade((unsub) => this.onCleanup(unsub));
   }
 
   async onPreload(loader: AssetLoader, bundle?: string): Promise<void> {

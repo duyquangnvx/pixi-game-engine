@@ -2,6 +2,7 @@ import type { Container } from "pixi.js";
 import type { ComponentType } from "react";
 import type { Store } from "./store";
 import type { ServiceRegistry } from "./services";
+import type { InputMapDef, InputRuntime } from "./input/types";
 
 /** Per-frame info; PixiJS Ticker satisfies this structurally. */
 export interface FrameInfo {
@@ -47,6 +48,7 @@ export interface SceneContext {
   readonly services: ServiceRegistry;
   readonly store: Store<GameState>;
   readonly viewport: Viewport;
+  readonly input: InputRuntime;
 }
 
 export type ViewFit = "contain" | "cover";
@@ -109,6 +111,7 @@ export interface SceneManagerHost {
   readonly ticker: TickerLike;
   readonly uiRoot: HTMLElement;
   readonly viewport: Viewport;
+  readonly input: InputRuntime;
   readonly bridge: Bridge;
   readonly loader: AssetLoader;
   readonly services: ServiceRegistry;
@@ -131,6 +134,7 @@ export interface GameConfig {
   initialScene: string;
   initialState: Omit<GameState, "route">;
   scenes: SceneConstructor[];
+  input?: InputMapDef;
   manifest?: string;
   plugins?: GamePlugin[];
   hooks?: GameHooks;

@@ -117,7 +117,8 @@ export class SceneManager {
     const ctx: SceneContext = {
       services: this.host.services,
       store: this.host.bridge.store,
-      viewport: this.host.viewport
+      viewport: this.host.viewport,
+      input: this.host.input
     };
     const instance = new Ctor(ctx);
     await instance.onPreload(this.host.loader, Ctor.assets);

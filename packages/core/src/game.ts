@@ -6,8 +6,11 @@ import { AssetLoader } from "./pixi/asset-loader";
 import { SceneManager } from "./pixi/scene-manager";
 import { registerGame, unregisterGame } from "./pixi/hmr";
 import { applyView, type ViewHandle } from "./pixi/view";
+import { createDomInputSource } from "./pixi/input-source";
+import { createInputRuntime, emptyInputRuntime } from "./input/runtime";
 import { mountOverlay } from "./react/mount";
 import { injectBaseStyles } from "./react/styles";
+import type { InputRuntime } from "./input/types";
 import type { GameConfig, SceneManagerHost } from "./types";
 
 export class Game {
@@ -21,6 +24,7 @@ export class Game {
   uiRoot: HTMLElement | null = null;
   private reactRoot: Root | null = null;
   private viewHandle: ViewHandle | null = null;
+  private inputRuntime: InputRuntime = emptyInputRuntime();
   private started = false;
 
   constructor(config: GameConfig) {
@@ -39,6 +43,7 @@ export class Game {
         if (!self.viewHandle) throw new Error("viewport is not available until the game has started");
         return self.viewHandle.viewport;
       },
+      get input() { return self.inputRuntime; },
       bridge: this.bridge,
       loader: this.loader,
       services: this.services
@@ -75,6 +80,16 @@ export class Game {
 
     this.viewHandle = applyView(this.app, this.config.view, mount, uiRoot);
 
+    if (this.config.input) {
+      const onError = this.config.hooks?.onError;
+      this.inputRuntime = createInputRuntime({
+        map: this.config.input,
+        source: createDomInputSource(this.app.canvas),
+        viewport: this.viewHandle.viewport,
+        ...(onError ? { onError } : {})
+      });
+    }
+
     if (this.config.manifest) await this.loader.init(this.config.manifest);
 
     this.reactRoot = mountOverlay(uiRoot, this);
@@ -88,6 +103,7 @@ export class Game {
   stop(): void {
     unregisterGame(this);
     this.scenes.destroyAll();
+    this.inputRuntime.destroy();
     this.viewHandle?.dispose();
     this.reactRoot?.unmount();
     this.app.destroy(true, { children: true });
