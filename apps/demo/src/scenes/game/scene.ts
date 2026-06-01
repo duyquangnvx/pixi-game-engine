@@ -35,6 +35,12 @@ export class GameScene extends BaseScene<{ level?: number }> {
     this.hero.x += x * speed * dt;
     this.hero.y += y * speed * dt;
   }
+
+  flashHero(): void {
+    if (!this.hero) return;
+    this.hero.scale.set(1.6);
+    this.timer(200, () => this.hero?.scale.set(1));
+  }
 }
 
 if (import.meta.hot) {
