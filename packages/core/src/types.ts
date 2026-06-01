@@ -1,5 +1,3 @@
-import type { Container } from "pixi.js";
-import type { ComponentType } from "react";
 import type { Store } from "./store";
 import type { ServiceRegistry } from "./services";
 import type { InputRuntime } from "./input/types";
@@ -49,11 +47,6 @@ export interface GameState {
 /** Empty by design — games populate it via declaration merging. */
 export interface CommandMap {}
 export type Command = CommandMap[keyof CommandMap];
-
-export interface SceneScreenProps<Data = unknown> {
-  data: Data;
-  scene: BaseScene<Data>;
-}
 
 /** Narrow dependency a scene needs — keeps scenes unit-testable. */
 export interface SceneContext {
@@ -110,30 +103,3 @@ export interface GoOptions {
   data?: unknown;
   transition?: Transition;
 }
-
-// Forward type-only reference; concrete class lives in scene.ts.
-import type { BaseScene } from "./pixi/scene";
-export type { BaseScene };
-
-import type { Bridge } from "./bridge";
-import type { AssetLoader } from "./pixi/asset-loader";
-
-export interface SceneStackEntry {
-  key: string;
-  data: unknown;
-  Screen?: ComponentType<SceneScreenProps>;
-  instance: BaseScene;
-}
-
-export interface SceneManagerHost {
-  readonly stage: Container;
-  readonly ticker: TickerLike;
-  readonly uiRoot: HTMLElement;
-  readonly viewport: Viewport;
-  readonly input: InputRuntime;
-  readonly scheduler: FrameLoop;
-  readonly bridge: Bridge;
-  readonly loader: AssetLoader;
-  readonly services: ServiceRegistry;
-}
-

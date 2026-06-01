@@ -1,4 +1,4 @@
-import type { SceneConstructor } from "./scene";
+import type { SceneConstructor } from "./base-scene";
 
 /** Structural view of a running game — avoids importing Game (no dep cycle). */
 interface ReloadableGame {

@@ -1,4 +1,4 @@
-import type { Orientation } from "../types";
+import type { Orientation } from "@studio/core";
 
 /**
  * Best-effort orientation lock. Resolves silently when no target is given or

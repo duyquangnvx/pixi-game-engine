@@ -1,4 +1,5 @@
-import type { GameState, ViewConfig, SceneConstructor, InputMapDef } from "@studio/core";
+import type { GameState, ViewConfig, InputMapDef } from "@studio/core";
+import type { SceneConstructor } from "@studio/pixi";
 import type { Game } from "./game";
 
 export interface GamePlugin {

@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { Container } from "pixi.js";
-import { createBridge, ServiceRegistry, AssetLoader, SceneManager, BaseScene, createViewport, emptyInputRuntime, emptyFrameLoop } from "@studio/core";
+import { createBridge, ServiceRegistry, createViewport, emptyInputRuntime, emptyFrameLoop } from "@studio/core";
+import { AssetLoader, SceneManager, BaseScene } from "@studio/pixi";
 import { GameProvider } from "./GameProvider";
 import { useGame, useStore, useScene } from "./hooks";
 import type { Game } from "./game";
-import type { FrameInfo, SceneManagerHost } from "@studio/core";
+import type { FrameInfo } from "@studio/core";
+import type { SceneManagerHost } from "@studio/pixi";
 
 class MenuScene extends BaseScene {
   static override key = "Menu";

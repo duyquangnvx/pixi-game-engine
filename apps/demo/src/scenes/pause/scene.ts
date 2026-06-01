@@ -1,4 +1,4 @@
-import { BaseScene, hotReplaceScene } from "@studio/core";
+import { BaseScene, hotReplaceScene } from "@studio/pixi";
 import { PauseScreen } from "./Screen";
 
 export class PauseScene extends BaseScene {

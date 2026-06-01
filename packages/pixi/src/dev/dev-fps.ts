@@ -1,4 +1,4 @@
-import type { FrameInfo, TickerLike } from "../types";
+import type { FrameInfo, TickerLike } from "@studio/core";
 
 const STYLE = [
   "position:absolute",

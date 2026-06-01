@@ -1,4 +1,4 @@
-import type { ViewState, Viewport } from "../types";
+import type { ViewState, Viewport } from "./types";
 
 /**
  * Build a scene-facing {@link Viewport} over a live transform reader. The

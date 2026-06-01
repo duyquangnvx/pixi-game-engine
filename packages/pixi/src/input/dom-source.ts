@@ -1,4 +1,4 @@
-import type { InputEventSource, RawKeyboardEvent, RawPointerEvent } from "../input/types";
+import type { InputEventSource, RawKeyboardEvent, RawPointerEvent } from "@studio/core";
 
 export interface DomInputSourceOptions {
   /** Max pointer travel (CSS px) between down and up to still count as a tap. */

@@ -100,6 +100,8 @@ export interface RawKeyboardEvent {
 }
 
 /** Raw input transport. The Pixi layer implements this over DOM listeners. */
+// (RawPointerEvent / RawKeyboardEvent / InputEventSource are re-exported from
+//  the package barrel so the Pixi DOM source can implement this contract.)
 export interface InputEventSource {
   onPointer(listener: (e: RawPointerEvent) => void): () => void;
   onKey(listener: (e: RawKeyboardEvent) => void): () => void;

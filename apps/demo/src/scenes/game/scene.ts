@@ -1,5 +1,5 @@
 import { Graphics } from "pixi.js";
-import { BaseScene, hotReplaceScene } from "@studio/core";
+import { BaseScene, hotReplaceScene } from "@studio/pixi";
 import { GameHud } from "./Hud";
 
 export class GameScene extends BaseScene {

@@ -4,6 +4,14 @@ import {
   createBridge,
   type Bridge,
   ServiceRegistry,
+  createInputRuntime,
+  emptyInputRuntime,
+  createFrameLoop,
+  emptyFrameLoop,
+  type InputRuntime,
+  type FrameLoop
+} from "@studio/core";
+import {
   AssetLoader,
   SceneManager,
   registerGame,
@@ -11,16 +19,10 @@ import {
   applyView,
   type ViewHandle,
   createDomInputSource,
-  createInputRuntime,
-  emptyInputRuntime,
-  createFrameLoop,
-  emptyFrameLoop,
   mountDevFps,
   tryLockOrientation,
-  type InputRuntime,
-  type FrameLoop,
   type SceneManagerHost
-} from "@studio/core";
+} from "@studio/pixi";
 import { mountOverlay } from "./mount";
 import { injectBaseStyles } from "./styles";
 import type { GameConfig } from "./config";

@@ -1,12 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { Container } from "pixi.js";
-import { createStore } from "../store";
-import { ServiceRegistry } from "../services";
-import { BaseScene } from "./scene";
-import { createViewport } from "./viewport";
-import { emptyInputRuntime } from "../input/runtime";
-import { emptyFrameLoop } from "../scheduler";
-import type { GameState, SceneContext } from "../types";
+import { createStore, ServiceRegistry, createViewport, emptyInputRuntime, emptyFrameLoop } from "@studio/core";
+import { BaseScene } from "./base-scene";
+import type { GameState, SceneContext } from "@studio/core";
 
 const identityViewport = createViewport(() => ({
   scale: 1,

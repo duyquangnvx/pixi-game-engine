@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { hotReplaceScene, registerGame, unregisterGame } from "./hmr";
-import { BaseScene } from "./scene";
-import type { SceneConstructor } from "./scene";
+import { BaseScene } from "./base-scene";
+import type { SceneConstructor } from "./base-scene";
 
 class Demo extends BaseScene {
   static override key = "Demo";

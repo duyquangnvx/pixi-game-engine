@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { createInputRuntime, emptyInputRuntime } from "./runtime";
-import { createViewport } from "../pixi/viewport";
+import { createViewport } from "../viewport";
 import type { InputEventSource, RawKeyboardEvent, RawPointerEvent } from "./types";
 
 function fakeSource() {

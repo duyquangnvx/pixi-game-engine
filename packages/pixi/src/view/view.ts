@@ -1,6 +1,6 @@
 import type { Application } from "pixi.js";
-import type { Orientation, ViewConfig, ViewFit, ViewState, Viewport } from "../types";
-import { createViewport } from "./viewport";
+import type { Orientation, ViewConfig, ViewFit, ViewState, Viewport } from "@studio/core";
+import { createViewport } from "@studio/core";
 
 export interface ViewHandle {
   readonly viewport: Viewport;

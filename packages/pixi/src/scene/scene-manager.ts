@@ -1,13 +1,7 @@
-import { tween, easeLinear } from "../transition";
-import { BaseScene, type SceneConstructor } from "./scene";
-import type {
-  FrameInfo,
-  GoOptions,
-  SceneContext,
-  SceneManagerHost,
-  SceneStackEntry,
-  Transition
-} from "../types";
+import { tween, easeLinear } from "@studio/core";
+import { BaseScene, type SceneConstructor } from "./base-scene";
+import type { FrameInfo, GoOptions, SceneContext, Transition } from "@studio/core";
+import type { SceneManagerHost, SceneStackEntry } from "./types";
 
 export class SceneManager {
   private readonly registry = new Map<string, SceneConstructor>();

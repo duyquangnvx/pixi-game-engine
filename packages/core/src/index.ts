@@ -1,26 +1,11 @@
-export { BaseScene, type SceneConstructor } from "./pixi/scene";
-export { SceneManager } from "./pixi/scene-manager";
 export { createBridge, type Bridge } from "./bridge";
 export { createStore, type Store } from "./store";
 export { ServiceRegistry, type ServiceKey } from "./services";
-export { AssetLoader } from "./pixi/asset-loader";
-export { hotReplaceScene } from "./pixi/hmr";
-export { applyView, fit } from "./pixi/view";
 export { defineInput } from "./input/define-input";
-export { createFrameLoop } from "./scheduler";
-export { tryLockOrientation } from "./pixi/orientation";
-export { tween, easeLinear, easeInOutQuad, type Ease } from "./transition";
-
-// Test-support / null-object helpers + symbols the extracted game.ts needs.
-// The Pixi-layer symbols below are TEMPORARY here (Pixi is still nested in
-// core this step) and relocate to @studio/pixi's barrel in Task 3.
-export { createViewport } from "./pixi/viewport";
-export { emptyFrameLoop } from "./scheduler";
+export { createFrameLoop, emptyFrameLoop } from "./scheduler";
 export { createInputRuntime, emptyInputRuntime } from "./input/runtime";
-export { registerGame, unregisterGame } from "./pixi/hmr";
-export { createDomInputSource } from "./pixi/input-source";
-export { mountDevFps } from "./pixi/dev-fps";
-export { type ViewHandle } from "./pixi/view";
+export { createViewport } from "./viewport";
+export { tween, easeLinear, easeInOutQuad, type Ease } from "./transition";
 
 export type {
   GameState,
@@ -34,9 +19,6 @@ export type {
   Transition,
   GoOptions,
   SceneContext,
-  SceneScreenProps,
-  SceneStackEntry,
-  SceneManagerHost,
   TickerLike,
   FrameInfo,
   FrameLoop,
@@ -56,5 +38,8 @@ export type {
   ActionEvent,
   AxisValue,
   ButtonName,
-  AxisName
+  AxisName,
+  RawPointerEvent,
+  RawKeyboardEvent,
+  InputEventSource
 } from "./input/types";

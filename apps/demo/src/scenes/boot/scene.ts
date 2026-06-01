@@ -1,4 +1,4 @@
-import { BaseScene, hotReplaceScene } from "@studio/core";
+import { BaseScene, hotReplaceScene } from "@studio/pixi";
 
 export class BootScene extends BaseScene {
   static override key = "Boot";

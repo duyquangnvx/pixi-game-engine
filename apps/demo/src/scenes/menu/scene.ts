@@ -1,4 +1,4 @@
-import { BaseScene, hotReplaceScene } from "@studio/core";
+import { BaseScene, hotReplaceScene } from "@studio/pixi";
 import { MenuScreen } from "./Screen";
 
 export class MenuScene extends BaseScene {

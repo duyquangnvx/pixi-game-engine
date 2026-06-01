@@ -1,12 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Container } from "pixi.js";
-import { createBridge, ServiceRegistry, AssetLoader, SceneManager, BaseScene, createViewport, emptyInputRuntime, emptyFrameLoop } from "@studio/core";
+import { createBridge, ServiceRegistry, createViewport, emptyInputRuntime, emptyFrameLoop } from "@studio/core";
+import { AssetLoader, SceneManager, BaseScene } from "@studio/pixi";
 import { GameProvider } from "./GameProvider";
 import { Overlay } from "./Overlay";
 import type { ReactNode } from "react";
+import type { FrameInfo } from "@studio/core";
 import type { Game } from "./game";
-import type { FrameInfo, SceneManagerHost, SceneScreenProps } from "@studio/core";
+import type { SceneManagerHost, SceneScreenProps } from "@studio/pixi";
 
 function MenuScreen(_props: SceneScreenProps): ReactNode {
   return <button>Play</button>;
