@@ -1,7 +1,7 @@
 import { Container } from "pixi.js";
 import type { ComponentType } from "react";
 import type { AssetLoader } from "./asset-loader";
-import type { SceneContext, SceneScreenProps } from "./types";
+import type { SceneContext, SceneScreenProps } from "../types";
 
 export abstract class BaseScene<Data = unknown> {
   static readonly key: string;

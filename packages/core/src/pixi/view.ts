@@ -1,5 +1,5 @@
 import type { Application } from "pixi.js";
-import type { ViewConfig, ViewFit } from "./types";
+import type { ViewConfig, ViewFit } from "../types";
 
 export function fit(
   designW: number,

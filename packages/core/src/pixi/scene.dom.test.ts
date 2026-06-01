@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { Container } from "pixi.js";
-import { createStore } from "./store";
-import { ServiceRegistry } from "./services";
+import { createStore } from "../store";
+import { ServiceRegistry } from "../services";
 import { BaseScene } from "./scene";
-import type { GameState, SceneContext } from "./types";
+import type { GameState, SceneContext } from "../types";
 
 function ctx(): SceneContext {
   return { services: new ServiceRegistry(), store: createStore<GameState>({ route: [] }) };

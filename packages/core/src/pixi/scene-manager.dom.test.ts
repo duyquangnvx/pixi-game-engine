@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { Container } from "pixi.js";
-import { createBridge } from "./bridge";
-import { ServiceRegistry } from "./services";
+import { createBridge } from "../bridge";
+import { ServiceRegistry } from "../services";
 import { AssetLoader } from "./asset-loader";
 import { BaseScene } from "./scene";
 import { SceneManager } from "./scene-manager";
-import type { FrameInfo, SceneManagerHost } from "./types";
+import type { FrameInfo, SceneManagerHost } from "../types";
 
 function makeHost(): { host: SceneManagerHost; frame(ms: number): void } {
   const ticks = new Set<(f: FrameInfo) => void>();

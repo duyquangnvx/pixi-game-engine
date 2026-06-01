@@ -66,11 +66,11 @@ export interface GoOptions {
 }
 
 // Forward type-only reference; concrete class lives in scene.ts.
-import type { BaseScene } from "./scene";
+import type { BaseScene } from "./pixi/scene";
 export type { BaseScene };
 
 import type { Bridge } from "./bridge";
-import type { AssetLoader } from "./asset-loader";
+import type { AssetLoader } from "./pixi/asset-loader";
 
 export interface SceneStackEntry {
   key: string;
@@ -88,7 +88,7 @@ export interface SceneManagerHost {
   readonly services: ServiceRegistry;
 }
 
-import type { SceneConstructor } from "./scene";
+import type { SceneConstructor } from "./pixi/scene";
 
 export interface GamePlugin {
   install(game: import("./game").Game): void | Promise<void>;

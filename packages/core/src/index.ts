@@ -1,11 +1,11 @@
 export { createGame, Game } from "./game";
-export { BaseScene, type SceneConstructor } from "./scene";
-export { SceneManager } from "./scene-manager";
+export { BaseScene, type SceneConstructor } from "./pixi/scene";
+export { SceneManager } from "./pixi/scene-manager";
 export { createBridge, type Bridge } from "./bridge";
 export { createStore, type Store } from "./store";
 export { ServiceRegistry, type ServiceKey } from "./services";
-export { AssetLoader } from "./asset-loader";
-export { applyView, fit } from "./view";
+export { AssetLoader } from "./pixi/asset-loader";
+export { applyView, fit } from "./pixi/view";
 export { tween, easeLinear, easeInOutQuad, type Ease } from "./transition";
 export { GameProvider } from "./react/GameProvider";
 export { Overlay } from "./react/Overlay";

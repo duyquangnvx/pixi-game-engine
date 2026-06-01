@@ -1,4 +1,4 @@
-import { tween, easeLinear } from "./transition";
+import { tween, easeLinear } from "../transition";
 import { BaseScene, type SceneConstructor } from "./scene";
 import type {
   FrameInfo,
@@ -7,7 +7,7 @@ import type {
   SceneManagerHost,
   SceneStackEntry,
   Transition
-} from "./types";
+} from "../types";
 
 export class SceneManager {
   private readonly registry = new Map<string, SceneConstructor>();
