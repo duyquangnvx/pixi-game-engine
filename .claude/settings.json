@@ -1,0 +1,19 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          { "type": "command", "command": "node .claude/hooks/eslint-fix.mjs", "statusMessage": "eslint --fix" }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "pnpm typecheck", "timeout": 120, "statusMessage": "typecheck" }
+        ]
+      }
+    ]
+  }
+}
