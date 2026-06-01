@@ -1068,6 +1068,18 @@ Then use **superpowers:finishing-a-development-branch** to wrap up.
 
 ---
 
+## Implementation note (deviation)
+
+Type-tests (`.test-d.ts`) are enforced by **`tsc -b` per-package** (`pnpm typecheck`),
+not vitest `--typecheck`. A single vitest typecheck program spans all packages and
+merges their module graphs, which bleeds the demo's `declare module "@studio/core"`
+augmentations (`GameState`, `CommandMap`, `SceneMap`) into other packages' tests and
+breaks them. Per-package `tsc -b` keeps declaration-merging scope correct, and the
+`.test-d.ts` files live inside each package's `include`, so `expectTypeOf`/`@ts-expect-error`
+assertions fail the build on mismatch. Consequently: no root `tsconfig.json` was added,
+the vitest `typecheck` block was dropped, and the `test:types` script was removed
+(type-tests run under `pnpm typecheck`).
+
 ## Spec-coverage self-review
 
 - §Target shape / package layout → Tasks 1–5. ✓
