@@ -85,6 +85,23 @@ export class SceneManager {
     this.commit();
   }
 
+  /**
+   * Hot-replace a scene class. Always refreshes the registry; if the changed
+   * scene is on top of the stack, rebuilds it in place with the same data.
+   */
+  async reload(ctor: SceneConstructor): Promise<void> {
+    this.registry.set(ctor.key, ctor);
+    const top = this.stack[this.stack.length - 1];
+    if (!top || top.key !== ctor.key) return;
+    const { data } = top;
+    this.teardown(top);
+    this.stack = this.stack.slice(0, -1);
+    const entry = await this.enter(ctor.key, { data });
+    entry.instance.world.alpha = 1;
+    this.stack = [...this.stack, entry];
+    this.commit();
+  }
+
   pop(): void {
     if (this.stack.length <= 1) return;
     const top = this.stack[this.stack.length - 1];

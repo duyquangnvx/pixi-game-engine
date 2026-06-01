@@ -5,6 +5,7 @@ export { createBridge, type Bridge } from "./bridge";
 export { createStore, type Store } from "./store";
 export { ServiceRegistry, type ServiceKey } from "./services";
 export { AssetLoader } from "./pixi/asset-loader";
+export { hotReplaceScene } from "./pixi/hmr";
 export { applyView, fit } from "./pixi/view";
 export { tween, easeLinear, easeInOutQuad, type Ease } from "./transition";
 export { GameProvider } from "./react/GameProvider";

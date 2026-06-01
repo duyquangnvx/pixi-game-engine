@@ -1,5 +1,5 @@
 import { Graphics } from "pixi.js";
-import { BaseScene } from "@studio/core";
+import { BaseScene, hotReplaceScene } from "@studio/core";
 import { GameHud } from "./Hud";
 
 export class GameScene extends BaseScene {
@@ -19,4 +19,9 @@ export class GameScene extends BaseScene {
     this.hero.x += 0.6 * dt;
     if (this.hero.x > 1320) this.hero.x = -40;
   }
+}
+
+if (import.meta.hot) {
+  import.meta.hot.accept();
+  hotReplaceScene(GameScene);
 }

@@ -1,5 +1,10 @@
-import { BaseScene } from "@studio/core";
+import { BaseScene, hotReplaceScene } from "@studio/core";
 
 export class BootScene extends BaseScene {
   static override key = "Boot";
+}
+
+if (import.meta.hot) {
+  import.meta.hot.accept();
+  hotReplaceScene(BootScene);
 }

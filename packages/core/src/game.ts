@@ -4,6 +4,7 @@ import { createBridge, type Bridge } from "./bridge";
 import { ServiceRegistry } from "./services";
 import { AssetLoader } from "./pixi/asset-loader";
 import { SceneManager } from "./pixi/scene-manager";
+import { registerGame, unregisterGame } from "./pixi/hmr";
 import { applyView } from "./pixi/view";
 import { mountOverlay } from "./react/mount";
 import { injectBaseStyles } from "./react/styles";
@@ -41,6 +42,7 @@ export class Game {
 
     this.scenes = new SceneManager(host, config.hooks?.onError);
     for (const ctor of config.scenes) this.scenes.register(ctor);
+    registerGame(this);
   }
 
   async start(): Promise<void> {
@@ -80,6 +82,7 @@ export class Game {
   }
 
   stop(): void {
+    unregisterGame(this);
     this.scenes.destroyAll();
     this.disposeView?.();
     this.reactRoot?.unmount();
