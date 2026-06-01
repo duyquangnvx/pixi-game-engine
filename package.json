@@ -6,7 +6,6 @@
     "typecheck": "tsc -b --pretty packages/core packages/pixi packages/react apps/demo",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:types": "vitest run --typecheck.only",
     "coverage": "vitest run --coverage",
     "depcruise": "depcruise packages/core/src packages/pixi/src packages/react/src --config .dependency-cruiser.cjs",
     "dev": "pnpm --filter @studio/demo dev",

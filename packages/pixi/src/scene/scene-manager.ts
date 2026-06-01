@@ -1,7 +1,12 @@
 import { tween, easeLinear } from "@studio/core";
 import { BaseScene, type SceneConstructor } from "./base-scene";
-import type { FrameInfo, GoOptions, SceneContext, Transition } from "@studio/core";
+import type { FrameInfo, GoOptions, SceneContext, SceneMap, Transition } from "@studio/core";
 import type { SceneManagerHost, SceneStackEntry } from "./types";
+
+type AnyKey = keyof SceneMap & string;
+/** Navigable scene keys — the augmented union, or `string` when SceneMap is empty. */
+type GoKey = [AnyKey] extends [never] ? string : AnyKey;
+type SceneDataFor<K> = K extends keyof SceneMap ? SceneMap[K] : unknown;
 
 export class SceneManager {
   private readonly registry = new Map<string, SceneConstructor>();
@@ -31,7 +36,7 @@ export class SceneManager {
     };
   };
 
-  async go(key: string, opt: GoOptions = {}): Promise<BaseScene> {
+  async go<K extends GoKey>(key: K, opt: GoOptions<SceneDataFor<K>> = {}): Promise<BaseScene> {
     const prev = this.stack[this.stack.length - 1] ?? null;
     const entry = await this.enter(key, opt);
     const transition = opt.transition ?? { type: "none" };
@@ -60,7 +65,7 @@ export class SceneManager {
     return entry.instance;
   }
 
-  async push(key: string, opt: GoOptions = {}): Promise<BaseScene> {
+  async push<K extends GoKey>(key: K, opt: GoOptions<SceneDataFor<K>> = {}): Promise<BaseScene> {
     const entry = await this.enter(key, opt);
     const transition = opt.transition ?? { type: "none" };
     this.stack = [...this.stack, entry];

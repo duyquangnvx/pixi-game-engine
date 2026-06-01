@@ -43,3 +43,20 @@ export interface GoOptions<Data = unknown> {
   data?: Data;
   transition?: Transition;
 }
+
+/**
+ * Scene registry. Maps scene key → scene data shape. Empty by design — games
+ * augment it via declaration merging so navigation keys and data are checked:
+ *
+ * ```ts
+ * declare module "@studio/core" {
+ *   interface SceneMap { Boot: void; Game: { level?: number } }
+ * }
+ * ```
+ */
+export interface SceneMap {}
+
+/** Registered scene keys, or `string` when {@link SceneMap} is unaugmented. */
+export type SceneKey = [keyof SceneMap & string] extends [never]
+  ? string
+  : keyof SceneMap & string;

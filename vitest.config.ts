@@ -9,7 +9,6 @@ export default defineConfig({
       ["**/*.dom.test.ts", "jsdom"],
       ["**/*.dom.test.tsx", "jsdom"]
     ],
-    typecheck: { include: ["**/*.test-d.ts"] },
     coverage: {
       provider: "v8",
       include: ["packages/*/src/**"],

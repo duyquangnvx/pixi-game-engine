@@ -2,13 +2,13 @@ import { Graphics } from "pixi.js";
 import { BaseScene, hotReplaceScene } from "@studio/pixi";
 import { GameHud } from "./Hud";
 
-export class GameScene extends BaseScene {
+export class GameScene extends BaseScene<{ level?: number }> {
   static override key = "Game";
   static override Screen = GameHud;
 
   private hero: Graphics | null = null;
 
-  override onCreate(): void {
+  override onCreate(_data: { level?: number }): void {
     const hero = this.spawn(new Graphics().circle(0, 0, 40).fill(0xe74c3c));
     hero.position.set(640, 360);
     this.hero = hero;

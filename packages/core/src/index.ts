@@ -16,7 +16,9 @@ export type {
   Command,
   SceneContext,
   Transition,
-  GoOptions
+  GoOptions,
+  SceneMap,
+  SceneKey
 } from "./scene-contract";
 export type {
   InputActions,
