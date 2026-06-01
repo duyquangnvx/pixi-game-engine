@@ -1,0 +1,91 @@
+import { Application } from "pixi.js";
+import type { Root } from "react-dom/client";
+import { createBridge, type Bridge } from "./bridge";
+import { ServiceRegistry } from "./services";
+import { AssetLoader } from "./asset-loader";
+import { SceneManager } from "./scene-manager";
+import { applyView } from "./view";
+import { mountOverlay } from "./react/mount";
+import { injectBaseStyles } from "./react/styles";
+import type { GameConfig, SceneManagerHost } from "./types";
+
+export class Game {
+  readonly config: Readonly<GameConfig>;
+  readonly app: Application = new Application();
+  readonly services: ServiceRegistry = new ServiceRegistry();
+  readonly bridge: Bridge;
+  readonly loader: AssetLoader = new AssetLoader();
+  readonly scenes: SceneManager;
+
+  uiRoot: HTMLElement | null = null;
+  private reactRoot: Root | null = null;
+  private disposeView: (() => void) | null = null;
+  private started = false;
+
+  constructor(config: GameConfig) {
+    this.config = Object.freeze({ ...config });
+    this.bridge = createBridge(config.initialState);
+
+    const self = this;
+    const host: SceneManagerHost = {
+      get stage() { return self.app.stage; },
+      get ticker() { return self.app.ticker; },
+      get uiRoot() {
+        if (!self.uiRoot) throw new Error("uiRoot is not mounted yet");
+        return self.uiRoot;
+      },
+      bridge: this.bridge,
+      loader: this.loader,
+      services: this.services
+    };
+
+    this.scenes = new SceneManager(host, config.hooks?.onError);
+    for (const ctor of config.scenes) this.scenes.register(ctor);
+  }
+
+  async start(): Promise<void> {
+    if (this.started) return;
+    this.started = true;
+
+    const selector = this.config.mount ?? "#app";
+    const mount = document.querySelector<HTMLElement>(selector);
+    if (!mount) throw new Error(`Mount "${selector}" not found`);
+    mount.style.position = "relative";
+
+    await this.app.init({
+      background: this.config.view.background ?? "#000000",
+      antialias: true,
+      autoDensity: true,
+      resolution: window.devicePixelRatio,
+      resizeTo: mount
+    });
+    mount.appendChild(this.app.canvas);
+
+    injectBaseStyles();
+    const uiRoot = document.createElement("div");
+    uiRoot.id = "ui-root";
+    mount.appendChild(uiRoot);
+    this.uiRoot = uiRoot;
+
+    this.disposeView = applyView(this.app, this.config.view, mount, uiRoot);
+
+    if (this.config.manifest) await this.loader.init(this.config.manifest);
+
+    this.reactRoot = mountOverlay(uiRoot, this);
+
+    for (const plugin of this.config.plugins ?? []) await plugin.install(this);
+    await this.config.hooks?.onReady?.(this);
+
+    await this.scenes.go(this.config.initialScene);
+  }
+
+  stop(): void {
+    this.disposeView?.();
+    this.reactRoot?.unmount();
+    this.app.destroy(true, { children: true });
+  }
+}
+
+export function createGame(config: GameConfig): Game {
+  return new Game(config);
+}
