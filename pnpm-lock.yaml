@@ -44,6 +44,12 @@ importers:
       '@studio/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@studio/pixi':
+        specifier: workspace:*
+        version: link:../../packages/pixi
+      '@studio/react':
+        specifier: workspace:*
+        version: link:../../packages/react
       pixi.js:
         specifier: ^8.6.0
         version: 8.18.1
@@ -54,17 +60,7 @@ importers:
         specifier: ^19.0.0
         version: 19.2.6(react@19.2.6)
 
-  packages/core:
-    devDependencies:
-      pixi.js:
-        specifier: ^8.6.0
-        version: 8.18.1
-      react:
-        specifier: ^19.0.0
-        version: 19.2.6
-      react-dom:
-        specifier: ^19.0.0
-        version: 19.2.6(react@19.2.6)
+  packages/core: {}
 
   packages/pixi:
     dependencies:
