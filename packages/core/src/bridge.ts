@@ -15,7 +15,7 @@ export function createBridge(initial: Omit<GameState, "route">): Bridge {
   return {
     store,
     dispatch: (cmd) => {
-      for (const handler of handlers) handler(cmd);
+      for (const handler of [...handlers]) handler(cmd);
     },
     onCommand: (handler) => {
       handlers.add(handler);
