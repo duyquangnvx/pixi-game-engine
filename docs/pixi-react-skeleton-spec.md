@@ -1,7 +1,7 @@
 # PixiJS + React-overlay skeleton spec (DX reference draft)
 
-> Bản nháp **để tham khảo DX**, song song với [`project-skeleton-spec.md`](./project-skeleton-spec.md) (bản cocos2d-js).
-> Mục tiêu: giữ nguyên *triết lý DX* của cocos-harness (contract-first, type-safe assets, scene lifecycle, agent-observable) nhưng thay engine bằng **PixiJS v8 (game-world) + React DOM (UI overlay)**.
+> Bản nháp **để tham khảo DX**.
+> Mục tiêu: một *triết lý DX* (contract-first, type-safe assets, scene lifecycle, agent-observable) trên **PixiJS v8 (game-world) + React DOM (UI overlay)**.
 > Đây **không phải** thiết kế chốt — nó là điểm khởi đầu cho session thiết kế riêng (xem [`pixi-react-harness-requirements.md`](./pixi-react-harness-requirements.md)).
 
 ---
@@ -32,7 +32,7 @@
 | Tiêu chí | DOM overlay (chọn) | `@pixi/react` (toàn canvas) |
 | --- | --- | --- |
 | Author UI (menu/shop/inventory) bằng LLM | HTML/CSS/Flexbox — agent cực thạo | Phải vẽ layout bằng Pixi primitive — dễ sai toạ độ |
-| Verify bằng tool | DOM inspectable → Playwright / chrome-devtools MCP (đã có sẵn trong repo) | Cần custom scene-tree introspection như cocos |
+| Verify bằng tool | DOM inspectable → Playwright / chrome-devtools MCP (đã có sẵn trong repo) | Cần custom scene-tree introspection |
 | Accessibility / text / scroll / input | Native của browser | Phải tự build |
 | Responsive | CSS media/clamp/flex | Tự tính scale |
 | Game-world (animation, gameplay, FX) | Pixi canvas — đúng việc | Pixi canvas |
@@ -85,7 +85,7 @@ my-game/
 
 ## 2. Core: `createGame` + `Game`
 
-Khác cocos: `Game` boot **đồng thời** Pixi `Application` (canvas) và React root (overlay), rồi nối chúng qua `bridge`.
+`Game` boot **đồng thời** Pixi `Application` (canvas) và React root (overlay), rồi nối chúng qua `bridge`.
 
 ```ts
 // src/core/game.ts
@@ -315,7 +315,7 @@ export class SceneManager {
 
 ## 5. Bridge — single source of truth giữa Pixi và React
 
-Đây là phần **mới so với cocos** (cocos không có 2 cây render). Nguyên tắc: **store là sự thật duy nhất**. Game logic (Pixi/service) *ghi*; React UI *đọc* qua selector; React UI gửi *ý định* trở lại qua command bus — không gọi thẳng vào Pixi.
+Có **hai cây render** (Pixi canvas + React DOM) nên cần một lớp nối. Nguyên tắc: **store là sự thật duy nhất**. Game logic (Pixi/service) *ghi*; React UI *đọc* qua selector; React UI gửi *ý định* trở lại qua command bus — không gọi thẳng vào Pixi.
 
 ```ts
 // src/core/bridge.ts
@@ -400,7 +400,7 @@ export class AssetLoader {
 }
 ```
 
-> So với cocos-harness `generate-resources.mjs`: ý tưởng giống hệt (folder → typed paths), nhưng được nâng cấp nhờ AssetPack lo luôn **optimize + bundle split + manifest**. Codegen chỉ còn việc "đắp type".
+> Ý tưởng cốt lõi (folder → typed paths) được nâng cấp nhờ AssetPack lo luôn **optimize + bundle split + manifest**. Codegen chỉ còn việc "đắp type".
 
 ---
 
@@ -501,22 +501,6 @@ export class GameScene extends BaseScene<{ level?: number }> {
 5. `ServiceRegistry` + plugins (audio, save).
 6. Resize/fit policy + HMR strategy.
 7. CLI scaffold `npx create-pixi-react-game`.
-
----
-
-## 10. Bảng ánh xạ từ cocos-harness (để giữ nhất quán DX)
-
-| cocos-harness | PixiJS + React-overlay | Ghi chú |
-| --- | --- | --- |
-| `createGame()/Game` (cc.game) | `createGame()/Game` (Pixi App + React root) | Boot 2 layer |
-| `BaseScene` HAS-A `cc.Scene` | `BaseScene` HAS-A `Container` + `static Screen` React | Thêm mặt DOM |
-| `cc` escape hatch | `app` (Pixi) + React | |
-| `SceneManager.go/push/pop` + transition | y hệt API, swap canvas world + DOM route | |
-| `schedule(cb,0)` update | `app.ticker.add` → `onUpdate(dt)` | |
-| `generate-resources.mjs` → `resources.ts` | AssetPack manifest → `assets.gen.ts` | Nâng cấp: optimize+bundle |
-| `ServiceRegistry` + plugins | y hệt (engine-agnostic) | Port thẳng |
-| (không có) | `bridge` store + command bus | Mới: nối 2 cây render |
-| `simulator-use` MCP (native sim) | browser-sim MCP (Playwright / chrome-devtools) | DOM + canvas inspectable sẵn |
 
 ---
 

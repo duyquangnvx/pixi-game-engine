@@ -4,7 +4,6 @@
 > **Brief này làm gì:** cố định mục tiêu, ràng buộc, quyết định đã chốt, và tiêu chí nghiệm thu — để session đó không phải đoán lại bối cảnh.
 > **Tài liệu đính kèm bắt buộc đọc trước:**
 > - [`pixi-react-skeleton-spec.md`](./pixi-react-skeleton-spec.md) — bản nháp DX (điểm khởi đầu, **không phải** thiết kế chốt).
-> - [`project-skeleton-spec.md`](./project-skeleton-spec.md) — bản tương đương cho cocos2d-js (để hiểu DX gốc cần giữ).
 > - `../CLAUDE.md` — final goal của repo (GDD → game 2D hoàn chỉnh qua coding agent).
 > - `../references/research-01.md`, `research-02.md` — research nền (IR + multi-agent, OpenGame/WorldCraft/GameUIAgent).
 
@@ -14,16 +13,16 @@
 
 Xây **workspace + tooling cho coding agent** để: **đầu vào là Game Design Document (GDD), đầu ra là một web game 2D chạy được**, build trên **PixiJS v8 (game-world) + React DOM (UI overlay)**.
 
-Trọng tâm output (giống cocos-harness): **UI nặng** (menu, shop, inventory, character, settings) + **game flow** (click button → đổi scene) + **asset/scene structure**. Gameplay logic phức tạp **không** phải trọng tâm.
+Trọng tâm output: **UI nặng** (menu, shop, inventory, character, settings) + **game flow** (click button → đổi scene) + **asset/scene structure**. Gameplay logic phức tạp **không** phải trọng tâm.
 
-Đây là một biến thể engine của cocos-harness. **Đóng góp giá trị nhất của harness gốc là *phương pháp DX* (contract-first, type-safe assets, scene lifecycle, agent-observable, verification-gated), không phải code engine cụ thể.** Phương pháp đó phải được port nguyên vẹn.
+**Đóng góp giá trị nhất của harness là *phương pháp DX* (contract-first, type-safe assets, scene lifecycle, agent-observable, verification-gated), không phải code engine cụ thể.** Phương pháp đó phải được giữ nguyên vẹn.
 
 ---
 
 ## 2. Quyết định đã chốt (không mở lại trừ khi có lý do mạnh)
 
 1. **Kiến trúc = DOM overlay.** Pixi canvas render game-world; React DOM render toàn bộ UI (absolute, đè canvas), nối nhau qua một store + command bus. **Không** dùng `@pixi/react` làm xương sống (chỉ optional escape hatch cho node in-world). Lý do đầy đủ ở §0 của skeleton spec.
-2. **Phạm vi = full agent-harness.** Không chỉ game skeleton, mà cả: asset codegen, skill/guide cho agent, **browser-sim MCP** (thay simulator native của cocos), và verification loop GDD→game. Tương đương cocos-harness nhưng cho Pixi+React.
+2. **Phạm vi = full agent-harness.** Không chỉ game skeleton, mà cả: asset codegen, skill/guide cho agent, **browser-sim MCP**, và verification loop GDD→game.
 3. **Stack:** Vite + TypeScript (strict) + PixiJS v8 + React 19/React DOM + **AssetPack** (pipeline asset chính chủ Pixi) + store nhỏ (Zustand đề xuất, nhưng để sau interface `bridge`).
 4. **Pure-React scene là first-class.** Phần lớn scene UI không cần Pixi world; agent chỉ viết TSX. Đây là lợi thế DX chính, phải được tài liệu hoá và scaffold hỗ trợ.
 
@@ -46,7 +45,7 @@ Trọng tâm output (giống cocos-harness): **UI nặng** (menu, shop, inventor
 - `BaseScene`: hai mặt `world: Container` + `static Screen: React.ComponentType`. Lifecycle `onPreload/onCreate/onUpdate/onDestroy`, helper `spawn`/`onCleanup` auto-cleanup, tick qua `app.ticker`.
 - `SceneManager`: `go/push/pop` + transition đồng bộ canvas↔DOM. Push/pop dùng cho overlay (modal/pause/shop popup).
 - `bridge`: store (single source of truth) + command bus (React → logic), `setRoute`. Quy ước pointer-events cho `#ui-root`.
-- `ServiceRegistry` + `GamePlugin` (port thẳng từ cocos-harness, engine-agnostic).
+- `ServiceRegistry` + `GamePlugin` (engine-agnostic).
 - React glue: `GameProvider`, `useGame`, `useScene`, `useStore`, `<Overlay>`.
 
 ### 4.2 Asset pipeline + codegen
@@ -55,16 +54,16 @@ Trọng tâm output (giống cocos-harness): **UI nặng** (menu, shop, inventor
 - `AssetLoader` wrap `Assets.init/loadBundle/backgroundLoadBundle/get`.
 - Vite plugin watch để re-gen khi manifest đổi.
 
-### 4.3 Browser-sim MCP (thay simulator-use native của cocos)
+### 4.3 Browser-sim MCP
 - Một MCP server cho agent điều khiển/giám sát game đang chạy trong **browser headless** (Playwright) — *hoặc* tận dụng MCP **chrome-devtools / playwright đã kết nối sẵn trong repo này* nếu phù hợp; quyết định build-mới-hay-tái-dùng là một open question (§6).
-- Bộ tool **tối thiểu ngang cocos `simulator-use`**: `launch`/`stop`/`restart`, `snapshot` (DOM + scene tree), `eval_in_runtime`, `click`/`input_text`/`swipe`, `take_screenshot`, `read_console`, `wait_for`, và tương đương `get_node_detail`/`set_node_prop`/`assert_no_defects`.
-- **Lợi thế cần khai thác:** UI là DOM thật → introspection/click/verify qua accessibility tree sẵn có, không cần custom bridge như cocos. Game-world (Pixi) cần một cầu nhỏ expose scene-tree (vd `window.__GAME__` debug API) để snapshot canvas-side.
+- Bộ tool **tối thiểu**: `launch`/`stop`/`restart`, `snapshot` (DOM + scene tree), `eval_in_runtime`, `click`/`input_text`/`swipe`, `take_screenshot`, `read_console`, `wait_for`, và `get_node_detail`/`set_node_prop`/`assert_no_defects`.
+- **Lợi thế cần khai thác:** UI là DOM thật → introspection/click/verify qua accessibility tree sẵn có, không cần custom bridge. Game-world (Pixi) cần một cầu nhỏ expose scene-tree (vd `window.__GAME__` debug API) để snapshot canvas-side.
 
 ### 4.4 Skills + guide cho agent
-- Port tinh thần các skill cocos-harness sang Pixi+React:
-  - **scene-convention** (tương đương `minigame-scene-convention`): scene = `world` + `Screen`; nơi đặt class theo vai (Orchestrator/Service/UI Component); quy ước communication (logic→UI qua store, UI→logic qua command bus).
+- Skill cho agent (Pixi+React):
+  - **scene-convention**: scene = `world` + `Screen`; nơi đặt class theo vai (Orchestrator/Service/UI Component); quy ước communication (logic→UI qua store, UI→logic qua command bus).
   - **tester**: convention test (unit logic + E2E qua browser-sim MCP).
-  - Guide PixiJS v8 + React-overlay (tương đương `rules/cocos2d-js/index.md`): node hierarchy Pixi, Assets API, anchor/coord (Pixi gốc top-left, y-down — **khác cocos y-up**, phải nêu rõ), pointer-events overlay, responsive/fit.
+  - Guide PixiJS v8 + React-overlay: node hierarchy Pixi, Assets API, anchor/coord (Pixi gốc top-left, y-down — phải nêu rõ quy ước này), pointer-events overlay, responsive/fit.
 - CLI scaffold `npx create-pixi-react-game` (scaffold scene pure-React + scene có world + HUD).
 
 ### 4.5 Verification loop (GDD → game)
@@ -94,7 +93,7 @@ Nếu một thao tác phổ biến của agent cần > 1 file "plumbing" hoặc 
 3. **Resize/fit**: scale overlay theo design-resolution (transform-scale) hay responsive CSS thuần? Áp đồng thời cho canvas + `#ui-root` ra sao?
 4. **Browser-sim MCP**: build server mới (Playwright) hay tái dùng MCP `chrome-devtools`/`playwright` đã có trong repo? So sánh: tool-surface kiểm soát được vs công sức.
 5. **Scene-tree introspection của Pixi**: hình thù `window.__GAME__` debug API (chỉ bật khi `debug:true`) để snapshot canvas-side ra sao?
-6. **Monorepo layout**: ở lại trong cocos-harness (thêm `packages/pixi-*`) hay tách repo? Brief này nghiêng về **package riêng trong cùng workspace** để tái dùng skills/rules/MCP convention.
+6. **Monorepo layout**: package riêng trong workspace chung (thêm `packages/pixi-*`) hay tách repo? Brief này nghiêng về **package riêng trong cùng workspace** để tái dùng skills/rules/MCP convention.
 7. **`@pixi/react`**: có ship như optional plugin không, hay để ngoài hoàn toàn ở v1?
 
 ---
@@ -115,7 +114,7 @@ Nếu một thao tác phổ biến của agent cần > 1 file "plumbing" hoặc 
 
 ## 8. Cạm bẫy đã biết (để session sau khỏi vấp)
 
-- **Coord khác cocos:** Pixi y-**down**, gốc top-left; cocos y-up, gốc bottom-left. Mọi guide/asset placement phải nói rõ — đừng copy công thức anchor từ cocos.
+- **Hệ toạ độ:** Pixi y-**down**, gốc top-left. Mọi guide/asset placement phải nêu rõ quy ước này để khỏi sai công thức anchor.
 - **Hai cây render dễ lệch:** transition, resize, z-order phải xử lý đồng bộ; đừng để React UI và Pixi world "trôi" độc lập. Store là trục đồng bộ.
 - **Pointer-events:** quên `pointer-events:none` mặc định cho `#ui-root` → overlay nuốt hết input game. Đây là bug kinh điển của DOM-overlay.
 - **HMR:** React Fast Refresh ổn cho UI; Pixi `world` không hot-reload tự nhiên — cần handler re-`go` scene hiện tại khi module `scene.ts` đổi.
@@ -125,7 +124,7 @@ Nếu một thao tác phổ biến của agent cần > 1 file "plumbing" hoặc 
 
 ## 9. Cách bắt đầu (đề xuất cho session sau)
 
-1. Đọc 4 tài liệu đính kèm ở đầu brief + lướt `packages/simulator-use` của cocos-harness để học interface MCP cần đạt.
+1. Đọc các tài liệu đính kèm ở đầu brief để nắm interface MCP cần đạt.
 2. Dựng skeleton theo **thứ tự build §9** của skeleton spec (Game→Scene→Manager trước, rồi bridge, rồi assets, rồi overlay/transition).
 3. Chốt lần lượt 7 open question §6 — ưu tiên #1, #3, #4 vì ảnh hưởng kiến trúc sớm.
 4. Mỗi mốc build xong → verify thật bằng browser-sim MCP trước khi đi tiếp (đừng tự nhận "done" khi chưa chạy — theo `rules/coding.md`).
