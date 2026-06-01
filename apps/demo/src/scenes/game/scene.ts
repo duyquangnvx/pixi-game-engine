@@ -7,8 +7,12 @@ export class GameScene extends BaseScene<{ level?: number }> {
   static override Screen = GameHud;
 
   private hero: Graphics | null = null;
+  private level = 1;
 
-  override onCreate(_data: { level?: number }): void {
+  override onCreate(data: { level?: number }): void {
+    this.level = data.level ?? 1;
+    this.store.setState((s) => ({ ...s, hud: { ...s.hud, level: this.level } }));
+
     const hero = this.spawn(new Graphics().circle(0, 0, 40).fill(0xe74c3c));
     hero.position.set(640, 360);
     this.hero = hero;
@@ -20,15 +24,16 @@ export class GameScene extends BaseScene<{ level?: number }> {
     });
 
     this.interval(1000, () => {
-      this.store.setState((s) => ({ ...s, hud: { ...s.hud, coins: s.hud.coins + 1 } }));
+      this.store.setState((s) => ({ ...s, hud: { ...s.hud, coins: s.hud.coins + this.level } }));
     });
   }
 
   override onUpdate(dt: number): void {
     if (!this.hero) return;
     const { x, y } = this.input.axis("move");
-    this.hero.x += x * 6 * dt;
-    this.hero.y += y * 6 * dt;
+    const speed = 6 + (this.level - 1) * 2;
+    this.hero.x += x * speed * dt;
+    this.hero.y += y * speed * dt;
   }
 }
 
