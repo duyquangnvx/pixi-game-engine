@@ -12,8 +12,11 @@ export type { ViewFit, Orientation, ViewConfig, ViewState, Viewport } from "./vi
 export type {
   RouteEntry,
   GameState,
-  CommandMap,
-  Command,
+  Commands,
+  CommandName,
+  CommandArgs,
+  CommandResult,
+  CommandHandler,
   SceneContext,
   Transition,
   GoOptions,

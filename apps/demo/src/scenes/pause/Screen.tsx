@@ -7,8 +7,8 @@ export function PauseScreen(): ReactNode {
     <div className="modal">
       <div className="panel">
         <h2>Paused</h2>
-        <button onClick={() => game.bridge.dispatch({ type: "scene:pop" })}>Resume</button>
-        <button onClick={() => game.bridge.dispatch({ type: "scene:go", key: "Menu" })}>Quit to Menu</button>
+        <button onClick={() => game.bridge.dispatch("scene:pop")}>Resume</button>
+        <button onClick={() => game.bridge.dispatch("scene:go", { key: "Menu" })}>Quit to Menu</button>
       </div>
     </div>
   );

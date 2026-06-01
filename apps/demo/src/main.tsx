@@ -17,24 +17,16 @@ const game = createGame({
   dev: { fps: true }
 });
 
-game.bridge.onCommand((cmd) => {
-  switch (cmd.type) {
-    case "scene:go":
-      void game.scenes.go(cmd.key, {
-        transition: { type: "fade", duration: 250 },
-        ...(cmd.level !== undefined ? { data: { level: cmd.level } } : {})
-      });
-      break;
-    case "scene:push":
-      void game.scenes.push(cmd.key);
-      break;
-    case "scene:pop":
-      game.scenes.pop();
-      break;
-    case "coin:add":
-      game.bridge.store.setState((s) => ({ ...s, hud: { ...s.hud, coins: s.hud.coins + cmd.amount } }));
-      break;
-  }
+game.bridge.handle("scene:go", ({ key, level }) =>
+  game.scenes.go(key, {
+    transition: { type: "fade", duration: 250 },
+    ...(level !== undefined ? { data: { level } } : {})
+  })
+);
+game.bridge.handle("scene:push", ({ key }) => game.scenes.push(key));
+game.bridge.handle("scene:pop", () => game.scenes.pop());
+game.bridge.handle("coin:add", ({ amount }) => {
+  game.bridge.store.setState((s) => ({ ...s, hud: { ...s.hud, coins: s.hud.coins + amount } }));
 });
 
 void game.start().then(() => {

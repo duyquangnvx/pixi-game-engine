@@ -19,12 +19,43 @@ export interface GameState {
 }
 
 /**
- * Command registry. Games augment via declaration merging:
- * `interface CommandMap { "scene:go": { type: "scene:go"; key: string } }`.
- * Empty by design.
+ * Command registry: maps a command name to a handler signature
+ * `(args) => result`. Games augment it via declaration merging, so `dispatch`
+ * and `handle` are checked against one source of truth:
+ *
+ * ```ts
+ * declare module "@studio/core" {
+ *   interface Commands {
+ *     "scene:go": (args: { key: SceneKey; level?: number }) => Promise<BaseScene>
+ *     "coin:add": (args: { amount: number }) => void
+ *   }
+ * }
+ * ```
+ *
+ * A command resolves to its (awaited) return type, so dispatch is two-way.
+ * Use `() => void` for fire-and-forget commands.
  */
-export interface CommandMap {}
-export type Command = CommandMap[keyof CommandMap];
+export interface Commands {}
+
+export type CommandName = keyof Commands & string;
+
+export type CommandArgs<K extends CommandName> = Commands[K] extends (...args: infer A) => unknown
+  ? A
+  : never;
+
+export type CommandResult<K extends CommandName> = Commands[K] extends (
+  ...args: never[]
+) => infer R
+  ? Awaited<R>
+  : never;
+
+/**
+ * Handler accepted by `bridge.handle`. May resolve synchronously or as a
+ * promise regardless of how the contract states the return type.
+ */
+export type CommandHandler<K extends CommandName> = (
+  ...args: CommandArgs<K>
+) => CommandResult<K> | Promise<CommandResult<K>>;
 
 /** Narrow dependency a scene needs — keeps scenes unit-testable. */
 export interface SceneContext {

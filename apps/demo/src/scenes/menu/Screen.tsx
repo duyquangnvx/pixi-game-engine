@@ -9,7 +9,7 @@ export function MenuScreen(): ReactNode {
         <h1>My Game</h1>
         <div style={{ display: "flex", gap: 8 }}>
           {[1, 2, 3].map((level) => (
-            <button key={level} onClick={() => game.bridge.dispatch({ type: "scene:go", key: "Game", level })}>
+            <button key={level} onClick={() => game.bridge.dispatch("scene:go", { key: "Game", level })}>
               Play L{level}
             </button>
           ))}

@@ -1,9 +1,10 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { createBridge } from "./bridge";
 
 declare module "./scene-contract" {
-  interface CommandMap {
-    noop: { type: "noop" };
+  interface Commands {
+    "math:double": (args: { value: number }) => number;
+    noop: () => void;
   }
 }
 
@@ -13,21 +14,29 @@ describe("createBridge", () => {
     expect(bridge.store.getState().route).toEqual([]);
   });
 
-  it("delivers dispatched commands to registered handlers", () => {
+  it("routes a command to its handler and returns the typed result", async () => {
     const bridge = createBridge({});
-    const handler = vi.fn();
-    bridge.onCommand(handler);
-    bridge.dispatch({ type: "noop" });
-    expect(handler).toHaveBeenCalledWith({ type: "noop" });
+    bridge.handle("math:double", ({ value }) => value * 2);
+    const result = await bridge.dispatch("math:double", { value: 21 });
+    expect(result).toBe(42);
   });
 
-  it("stops delivering to a handler after its unsubscribe", () => {
+  it("awaits an async handler before resolving", async () => {
     const bridge = createBridge({});
-    const handler = vi.fn();
-    const off = bridge.onCommand(handler);
+    bridge.handle("math:double", async ({ value }) => value * 2);
+    await expect(bridge.dispatch("math:double", { value: 4 })).resolves.toBe(8);
+  });
+
+  it("rejects when no handler is registered for the command", async () => {
+    const bridge = createBridge({});
+    await expect(bridge.dispatch("noop")).rejects.toThrow(/no handler registered/i);
+  });
+
+  it("stops routing after the handle disposer runs", async () => {
+    const bridge = createBridge({});
+    const off = bridge.handle("noop", () => {});
     off();
-    bridge.dispatch({ type: "noop" });
-    expect(handler).not.toHaveBeenCalled();
+    await expect(bridge.dispatch("noop")).rejects.toThrow();
   });
 
   it("setRoute replaces the route stack in the store", () => {

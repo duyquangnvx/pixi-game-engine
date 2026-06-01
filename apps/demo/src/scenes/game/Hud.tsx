@@ -9,8 +9,8 @@ export function GameHud(): ReactNode {
     <>
       <div className="hud">Level {level} · Coins: {coins}</div>
       <div style={{ position: "absolute", top: 16, right: 16, display: "flex", gap: 8 }}>
-        <button onClick={() => game.bridge.dispatch({ type: "coin:add", amount: 1 })}>+1 Coin</button>
-        <button onClick={() => game.bridge.dispatch({ type: "scene:push", key: "Pause" })}>Pause</button>
+        <button onClick={() => game.bridge.dispatch("coin:add", { amount: 1 })}>+1 Coin</button>
+        <button onClick={() => game.bridge.dispatch("scene:push", { key: "Pause" })}>Pause</button>
       </div>
     </>
   );
