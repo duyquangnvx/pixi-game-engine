@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Studio Demo</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #000; }
+      #app { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+      .panel { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+      .panel button { font-size: 20px; padding: 8px 24px; cursor: pointer; }
+      .center { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-family: sans-serif; }
+      .modal { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,0.5); }
+      .modal .panel { background: #222; color: #fff; padding: 24px; border-radius: 8px; }
+      .hud { position: absolute; top: 16px; left: 16px; color: #fff; font-family: sans-serif; font-size: 20px; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
