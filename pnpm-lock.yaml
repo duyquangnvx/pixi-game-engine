@@ -66,6 +66,47 @@ importers:
         specifier: ^19.0.0
         version: 19.2.6(react@19.2.6)
 
+  packages/pixi:
+    dependencies:
+      '@studio/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.2.15
+      pixi.js:
+        specifier: ^8.6.0
+        version: 8.18.1
+      react:
+        specifier: ^19.0.0
+        version: 19.2.6
+
+  packages/react:
+    dependencies:
+      '@studio/core':
+        specifier: workspace:*
+        version: link:../core
+      '@studio/pixi':
+        specifier: workspace:*
+        version: link:../pixi
+    devDependencies:
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.2.15
+      '@types/react-dom':
+        specifier: ^19.0.0
+        version: 19.2.3(@types/react@19.2.15)
+      pixi.js:
+        specifier: ^8.6.0
+        version: 8.18.1
+      react:
+        specifier: ^19.0.0
+        version: 19.2.6
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.6(react@19.2.6)
+
 packages:
 
   '@ampproject/remapping@2.3.0':

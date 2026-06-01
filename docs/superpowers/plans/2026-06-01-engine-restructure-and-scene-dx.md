@@ -767,11 +767,12 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 - [ ] **Step 1: Update `vitest.config.ts`**
 
 ```ts
-import { defineConfig } from "vitest/config";
+import { defineConfig, configDefaults } from "vitest/config";
 
 export default defineConfig({
   test: {
     environment: "node",
+    exclude: [...configDefaults.exclude, "tmp/**"],
     environmentMatchGlobs: [
       ["packages/react/src/**", "jsdom"],
       ["**/*.dom.test.ts", "jsdom"],
