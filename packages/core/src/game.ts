@@ -80,6 +80,7 @@ export class Game {
   }
 
   stop(): void {
+    this.scenes.destroyAll();
     this.disposeView?.();
     this.reactRoot?.unmount();
     this.app.destroy(true, { children: true });

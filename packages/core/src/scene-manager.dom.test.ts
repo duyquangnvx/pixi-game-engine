@@ -71,6 +71,23 @@ describe("SceneManager", () => {
     expect(mgr.getStack().map((e) => e.key)).toEqual(["B"]);
   });
 
+  it("go() from a pushed stack tears down every underlying scene (no orphans)", async () => {
+    log.length = 0;
+    const { host } = makeHost();
+    const mgr = new SceneManager(host, () => undefined);
+    mgr.register(A);
+    mgr.register(B);
+
+    await mgr.go("A");
+    await mgr.push("B"); // stack [A, B], two worlds on stage
+    expect(host.stage.children.length).toBe(2);
+
+    await mgr.go("A"); // navigate away from a depth-2 stack
+    expect(host.stage.children.length).toBe(1); // only the new scene's world remains
+    expect(mgr.getStack().map((e) => e.key)).toEqual(["A"]);
+    expect(log).toContain("A.destroy"); // the previously-underneath A was torn down, not orphaned
+  });
+
   it("push() keeps the previous scene mounted; pop() restores it", async () => {
     const { host } = makeHost();
     const mgr = new SceneManager(host, () => undefined);

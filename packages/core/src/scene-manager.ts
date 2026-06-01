@@ -49,7 +49,7 @@ export class SceneManager {
       });
     }
 
-    if (prev) this.teardown(prev);
+    this.teardownAll();
     this.stack = [entry];
     this.commit();
 
@@ -78,6 +78,11 @@ export class SceneManager {
       entry.instance.world.alpha = 1;
     }
     return entry.instance;
+  }
+
+  destroyAll(): void {
+    this.teardownAll();
+    this.commit();
   }
 
   pop(): void {
@@ -110,6 +115,11 @@ export class SceneManager {
     const entry: SceneStackEntry = { key, data: opt.data, instance };
     if (Ctor.Screen) entry.Screen = Ctor.Screen;
     return entry;
+  }
+
+  private teardownAll(): void {
+    for (const entry of [...this.stack].reverse()) this.teardown(entry);
+    this.stack = [];
   }
 
   private teardown(entry: SceneStackEntry): void {
