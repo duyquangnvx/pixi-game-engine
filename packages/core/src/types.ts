@@ -16,6 +16,18 @@ export interface TickerLike {
   remove(fn: (frame: FrameInfo) => void): unknown;
 }
 
+/** Cancels a scheduled timer or interval. */
+export interface ScheduleHandle {
+  cancel(): void;
+}
+
+/** Ticker-driven scheduler; see `createFrameLoop`. */
+export interface FrameLoop {
+  timer(ms: number, fn: () => void): ScheduleHandle;
+  interval(ms: number, fn: () => void): ScheduleHandle;
+  destroy(): void;
+}
+
 /** One entry in the route stack mirrored into game state. */
 export interface RouteEntry {
   scene: string;
@@ -49,6 +61,7 @@ export interface SceneContext {
   readonly store: Store<GameState>;
   readonly viewport: Viewport;
   readonly input: InputRuntime;
+  readonly scheduler: FrameLoop;
 }
 
 export type ViewFit = "contain" | "cover";
@@ -112,6 +125,7 @@ export interface SceneManagerHost {
   readonly uiRoot: HTMLElement;
   readonly viewport: Viewport;
   readonly input: InputRuntime;
+  readonly scheduler: FrameLoop;
   readonly bridge: Bridge;
   readonly loader: AssetLoader;
   readonly services: ServiceRegistry;

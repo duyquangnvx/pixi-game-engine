@@ -8,6 +8,7 @@ export { AssetLoader } from "./pixi/asset-loader";
 export { hotReplaceScene } from "./pixi/hmr";
 export { applyView, fit } from "./pixi/view";
 export { defineInput } from "./input/define-input";
+export { createFrameLoop } from "./scheduler";
 export { tween, easeLinear, easeInOutQuad, type Ease } from "./transition";
 export { GameProvider } from "./react/GameProvider";
 export { Overlay } from "./react/Overlay";
@@ -31,7 +32,9 @@ export type {
   SceneStackEntry,
   SceneManagerHost,
   TickerLike,
-  FrameInfo
+  FrameInfo,
+  FrameLoop,
+  ScheduleHandle
 } from "./types";
 export type {
   InputActions,

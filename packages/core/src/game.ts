@@ -8,10 +8,11 @@ import { registerGame, unregisterGame } from "./pixi/hmr";
 import { applyView, type ViewHandle } from "./pixi/view";
 import { createDomInputSource } from "./pixi/input-source";
 import { createInputRuntime, emptyInputRuntime } from "./input/runtime";
+import { createFrameLoop, emptyFrameLoop } from "./scheduler";
 import { mountOverlay } from "./react/mount";
 import { injectBaseStyles } from "./react/styles";
 import type { InputRuntime } from "./input/types";
-import type { GameConfig, SceneManagerHost } from "./types";
+import type { FrameLoop, GameConfig, SceneManagerHost } from "./types";
 
 export class Game {
   readonly config: Readonly<GameConfig>;
@@ -25,6 +26,7 @@ export class Game {
   private reactRoot: Root | null = null;
   private viewHandle: ViewHandle | null = null;
   private inputRuntime: InputRuntime = emptyInputRuntime();
+  private frameLoop: FrameLoop = emptyFrameLoop();
   private started = false;
 
   constructor(config: GameConfig) {
@@ -44,6 +46,7 @@ export class Game {
         return self.viewHandle.viewport;
       },
       get input() { return self.inputRuntime; },
+      get scheduler() { return self.frameLoop; },
       bridge: this.bridge,
       loader: this.loader,
       services: this.services
@@ -80,8 +83,10 @@ export class Game {
 
     this.viewHandle = applyView(this.app, this.config.view, mount, uiRoot);
 
+    const onError = this.config.hooks?.onError;
+    this.frameLoop = createFrameLoop(this.app.ticker, onError ? { onError } : {});
+
     if (this.config.input) {
-      const onError = this.config.hooks?.onError;
       this.inputRuntime = createInputRuntime({
         map: this.config.input,
         source: createDomInputSource(this.app.canvas),
@@ -104,6 +109,7 @@ export class Game {
     unregisterGame(this);
     this.scenes.destroyAll();
     this.inputRuntime.destroy();
+    this.frameLoop.destroy();
     this.viewHandle?.dispose();
     this.reactRoot?.unmount();
     this.app.destroy(true, { children: true });

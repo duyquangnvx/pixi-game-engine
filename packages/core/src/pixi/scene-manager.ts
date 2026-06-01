@@ -118,7 +118,8 @@ export class SceneManager {
       services: this.host.services,
       store: this.host.bridge.store,
       viewport: this.host.viewport,
-      input: this.host.input
+      input: this.host.input,
+      scheduler: this.host.scheduler
     };
     const instance = new Ctor(ctx);
     await instance.onPreload(this.host.loader, Ctor.assets);

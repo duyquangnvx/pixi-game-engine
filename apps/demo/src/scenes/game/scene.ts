@@ -18,6 +18,10 @@ export class GameScene extends BaseScene {
     this.input.onTap("warp", (e) => {
       if (e.designX !== undefined && e.designY !== undefined) this.hero?.position.set(e.designX, e.designY);
     });
+
+    this.interval(1000, () => {
+      this.store.setState((s) => ({ ...s, hud: { ...s.hud, coins: s.hud.coins + 1 } }));
+    });
   }
 
   override onUpdate(dt: number): void {

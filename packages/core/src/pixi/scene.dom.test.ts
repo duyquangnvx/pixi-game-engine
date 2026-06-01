@@ -5,6 +5,7 @@ import { ServiceRegistry } from "../services";
 import { BaseScene } from "./scene";
 import { createViewport } from "./viewport";
 import { emptyInputRuntime } from "../input/runtime";
+import { emptyFrameLoop } from "../scheduler";
 import type { GameState, SceneContext } from "../types";
 
 const identityViewport = createViewport(() => ({
@@ -20,7 +21,8 @@ function ctx(): SceneContext {
     services: new ServiceRegistry(),
     store: createStore<GameState>({ route: [] }),
     viewport: identityViewport,
-    input: emptyInputRuntime()
+    input: emptyInputRuntime(),
+    scheduler: emptyFrameLoop()
   };
 }
 

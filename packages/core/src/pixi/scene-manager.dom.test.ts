@@ -7,6 +7,7 @@ import { BaseScene } from "./scene";
 import { SceneManager } from "./scene-manager";
 import { createViewport } from "./viewport";
 import { emptyInputRuntime } from "../input/runtime";
+import { emptyFrameLoop } from "../scheduler";
 import type { FrameInfo, SceneManagerHost } from "../types";
 
 function makeHost(): { host: SceneManagerHost; frame(ms: number): void } {
@@ -26,6 +27,7 @@ function makeHost(): { host: SceneManagerHost; frame(ms: number): void } {
       css: { width: 1280, height: 720 }
     })),
     input: emptyInputRuntime(),
+    scheduler: emptyFrameLoop(),
     bridge: createBridge({}),
     loader: new AssetLoader(),
     services: new ServiceRegistry()

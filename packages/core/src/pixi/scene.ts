@@ -2,7 +2,7 @@ import { Container } from "pixi.js";
 import type { ComponentType } from "react";
 import type { AssetLoader } from "./asset-loader";
 import type { InputFacade } from "../input/types";
-import type { SceneContext, SceneScreenProps } from "../types";
+import type { SceneContext, SceneScreenProps, ScheduleHandle } from "../types";
 
 export abstract class BaseScene<Data = unknown> {
   static readonly key: string;
@@ -14,6 +14,7 @@ export abstract class BaseScene<Data = unknown> {
   protected readonly store: SceneContext["store"];
   protected readonly view: SceneContext["viewport"];
   protected readonly input: InputFacade;
+  private readonly scheduler: SceneContext["scheduler"];
 
   private readonly disposers: Array<() => void> = [];
 
@@ -22,6 +23,21 @@ export abstract class BaseScene<Data = unknown> {
     this.store = ctx.store;
     this.view = ctx.viewport;
     this.input = ctx.input.facade((unsub) => this.onCleanup(unsub));
+    this.scheduler = ctx.scheduler;
+  }
+
+  /** Run `fn` once after `ms` of game time; auto-cancelled on teardown. */
+  protected timer(ms: number, fn: () => void): ScheduleHandle {
+    const handle = this.scheduler.timer(ms, fn);
+    this.onCleanup(() => handle.cancel());
+    return handle;
+  }
+
+  /** Run `fn` every `ms` of game time; auto-cancelled on teardown. */
+  protected interval(ms: number, fn: () => void): ScheduleHandle {
+    const handle = this.scheduler.interval(ms, fn);
+    this.onCleanup(() => handle.cancel());
+    return handle;
   }
 
   async onPreload(loader: AssetLoader, bundle?: string): Promise<void> {
