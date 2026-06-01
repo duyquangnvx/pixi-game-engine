@@ -21,6 +21,8 @@ export type {
   RouteEntry,
   ViewConfig,
   ViewFit,
+  ViewState,
+  Viewport,
   Transition,
   GoOptions,
   SceneContext,

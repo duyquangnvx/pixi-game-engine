@@ -46,6 +46,7 @@ export interface SceneScreenProps<Data = unknown> {
 export interface SceneContext {
   readonly services: ServiceRegistry;
   readonly store: Store<GameState>;
+  readonly viewport: Viewport;
 }
 
 export type ViewFit = "contain" | "cover";
@@ -54,6 +55,30 @@ export interface ViewConfig {
   design: readonly [number, number];
   fit?: ViewFit;
   background?: string;
+}
+
+/**
+ * Live view transform: how design coordinates map onto canvas-relative CSS
+ * pixels under the current fit/resize. Reassigned (never mutated) on resize.
+ */
+export interface ViewState {
+  readonly scale: number;
+  readonly offsetX: number;
+  readonly offsetY: number;
+  readonly design: Readonly<{ width: number; height: number }>;
+  readonly css: Readonly<{ width: number; height: number }>;
+}
+
+/**
+ * Scene-facing view: read the current transform and convert between viewport
+ * space (canvas-relative CSS pixels, e.g. a pointer event) and design space.
+ */
+export interface Viewport {
+  readonly scale: number;
+  readonly design: Readonly<{ width: number; height: number }>;
+  readonly css: Readonly<{ width: number; height: number }>;
+  viewportToDesign(x: number, y: number): { x: number; y: number };
+  designToViewport(x: number, y: number): { x: number; y: number };
 }
 
 export type Transition =
@@ -83,6 +108,7 @@ export interface SceneManagerHost {
   readonly stage: Container;
   readonly ticker: TickerLike;
   readonly uiRoot: HTMLElement;
+  readonly viewport: Viewport;
   readonly bridge: Bridge;
   readonly loader: AssetLoader;
   readonly services: ServiceRegistry;

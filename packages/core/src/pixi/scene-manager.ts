@@ -114,7 +114,11 @@ export class SceneManager {
   private async enter(key: string, opt: GoOptions): Promise<SceneStackEntry> {
     const Ctor = this.registry.get(key);
     if (!Ctor) throw new Error(`Scene "${key}" is not registered`);
-    const ctx: SceneContext = { services: this.host.services, store: this.host.bridge.store };
+    const ctx: SceneContext = {
+      services: this.host.services,
+      store: this.host.bridge.store,
+      viewport: this.host.viewport
+    };
     const instance = new Ctor(ctx);
     await instance.onPreload(this.host.loader, Ctor.assets);
     this.host.stage.addChild(instance.world);

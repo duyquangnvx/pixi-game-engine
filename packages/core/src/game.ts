@@ -5,7 +5,7 @@ import { ServiceRegistry } from "./services";
 import { AssetLoader } from "./pixi/asset-loader";
 import { SceneManager } from "./pixi/scene-manager";
 import { registerGame, unregisterGame } from "./pixi/hmr";
-import { applyView } from "./pixi/view";
+import { applyView, type ViewHandle } from "./pixi/view";
 import { mountOverlay } from "./react/mount";
 import { injectBaseStyles } from "./react/styles";
 import type { GameConfig, SceneManagerHost } from "./types";
@@ -20,7 +20,7 @@ export class Game {
 
   uiRoot: HTMLElement | null = null;
   private reactRoot: Root | null = null;
-  private disposeView: (() => void) | null = null;
+  private viewHandle: ViewHandle | null = null;
   private started = false;
 
   constructor(config: GameConfig) {
@@ -34,6 +34,10 @@ export class Game {
       get uiRoot() {
         if (!self.uiRoot) throw new Error("uiRoot is not mounted yet");
         return self.uiRoot;
+      },
+      get viewport() {
+        if (!self.viewHandle) throw new Error("viewport is not available until the game has started");
+        return self.viewHandle.viewport;
       },
       bridge: this.bridge,
       loader: this.loader,
@@ -69,7 +73,7 @@ export class Game {
     mount.appendChild(uiRoot);
     this.uiRoot = uiRoot;
 
-    this.disposeView = applyView(this.app, this.config.view, mount, uiRoot);
+    this.viewHandle = applyView(this.app, this.config.view, mount, uiRoot);
 
     if (this.config.manifest) await this.loader.init(this.config.manifest);
 
@@ -84,7 +88,7 @@ export class Game {
   stop(): void {
     unregisterGame(this);
     this.scenes.destroyAll();
-    this.disposeView?.();
+    this.viewHandle?.dispose();
     this.reactRoot?.unmount();
     this.app.destroy(true, { children: true });
   }

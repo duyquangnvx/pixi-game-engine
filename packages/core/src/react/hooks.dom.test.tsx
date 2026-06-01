@@ -7,6 +7,7 @@ import { ServiceRegistry } from "../services";
 import { AssetLoader } from "../pixi/asset-loader";
 import { SceneManager } from "../pixi/scene-manager";
 import { BaseScene } from "../pixi/scene";
+import { createViewport } from "../pixi/viewport";
 import { GameProvider } from "./GameProvider";
 import { useGame, useStore, useScene } from "./hooks";
 import type { Game } from "../game";
@@ -22,6 +23,7 @@ function fakeGame(): Game {
     stage: new Container(),
     ticker: { add: (fn) => { ticks.add(fn); }, remove: (fn) => { ticks.delete(fn); } },
     uiRoot: document.createElement("div"),
+    viewport: createViewport(() => ({ scale: 1, offsetX: 0, offsetY: 0, design: { width: 1280, height: 720 }, css: { width: 1280, height: 720 } })),
     bridge: createBridge({}),
     loader: new AssetLoader(),
     services: new ServiceRegistry()

@@ -11,12 +11,14 @@ export abstract class BaseScene<Data = unknown> {
   readonly world: Container = new Container();
   protected readonly services: SceneContext["services"];
   protected readonly store: SceneContext["store"];
+  protected readonly view: SceneContext["viewport"];
 
   private readonly disposers: Array<() => void> = [];
 
   constructor(ctx: SceneContext) {
     this.services = ctx.services;
     this.store = ctx.store;
+    this.view = ctx.viewport;
   }
 
   async onPreload(loader: AssetLoader, bundle?: string): Promise<void> {

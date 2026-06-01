@@ -5,6 +5,7 @@ import { ServiceRegistry } from "../services";
 import { AssetLoader } from "./asset-loader";
 import { BaseScene } from "./scene";
 import { SceneManager } from "./scene-manager";
+import { createViewport } from "./viewport";
 import type { FrameInfo, SceneManagerHost } from "../types";
 
 function makeHost(): { host: SceneManagerHost; frame(ms: number): void } {
@@ -16,6 +17,13 @@ function makeHost(): { host: SceneManagerHost; frame(ms: number): void } {
       remove: (fn) => { ticks.delete(fn); }
     },
     uiRoot: document.createElement("div"),
+    viewport: createViewport(() => ({
+      scale: 1,
+      offsetX: 0,
+      offsetY: 0,
+      design: { width: 1280, height: 720 },
+      css: { width: 1280, height: 720 }
+    })),
     bridge: createBridge({}),
     loader: new AssetLoader(),
     services: new ServiceRegistry()

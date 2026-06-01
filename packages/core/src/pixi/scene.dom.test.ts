@@ -3,10 +3,19 @@ import { Container } from "pixi.js";
 import { createStore } from "../store";
 import { ServiceRegistry } from "../services";
 import { BaseScene } from "./scene";
+import { createViewport } from "./viewport";
 import type { GameState, SceneContext } from "../types";
 
+const identityViewport = createViewport(() => ({
+  scale: 1,
+  offsetX: 0,
+  offsetY: 0,
+  design: { width: 1280, height: 720 },
+  css: { width: 1280, height: 720 }
+}));
+
 function ctx(): SceneContext {
-  return { services: new ServiceRegistry(), store: createStore<GameState>({ route: [] }) };
+  return { services: new ServiceRegistry(), store: createStore<GameState>({ route: [] }), viewport: identityViewport };
 }
 
 class TestScene extends BaseScene {
