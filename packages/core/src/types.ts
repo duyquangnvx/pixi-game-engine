@@ -75,7 +75,7 @@ import type { AssetLoader } from "./asset-loader";
 export interface SceneStackEntry {
   key: string;
   data: unknown;
-  Screen?: import("react").ComponentType<SceneScreenProps>;
+  Screen?: ComponentType<SceneScreenProps>;
   instance: BaseScene;
 }
 

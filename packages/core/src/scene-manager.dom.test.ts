@@ -26,6 +26,8 @@ function makeHost(): { host: SceneManagerHost; frame(ms: number): void } {
   };
 }
 
+const flush = (): Promise<void> => new Promise((resolve) => { setTimeout(resolve, 0); });
+
 const log: string[] = [];
 class A extends BaseScene {
   static override key = "A";
@@ -98,6 +100,21 @@ describe("SceneManager", () => {
     const { host } = makeHost();
     const mgr = new SceneManager(host, () => undefined);
     await expect(mgr.go("Nope")).rejects.toThrow(/Nope/);
+  });
+
+  it("go() with fade ramps the new scene to full alpha and removes the tween tick", async () => {
+    log.length = 0;
+    const { host, frame } = makeHost();
+    const mgr = new SceneManager(host, () => undefined);
+    mgr.register(A);
+
+    const done = mgr.go("A", { transition: { type: "fade", duration: 100 } });
+    await flush(); // let enter() resolve so the fade-in tween registers its ticker callback
+    frame(50);
+    frame(50); // tween reaches p=1, resolves, self-removes
+    await done;
+
+    expect(mgr.getStack()[0]?.instance.world.alpha).toBe(1);
   });
 
   it("notifies stack subscribers on change", async () => {

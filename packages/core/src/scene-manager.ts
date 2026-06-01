@@ -38,8 +38,8 @@ export class SceneManager {
   };
 
   async go(key: string, opt: GoOptions = {}): Promise<BaseScene> {
-    const entry = await this.enter(key, opt);
     const prev = this.stack[this.stack.length - 1] ?? null;
+    const entry = await this.enter(key, opt);
     const transition = opt.transition ?? { type: "none" };
 
     if (prev && transition.type === "fade") {
@@ -74,6 +74,8 @@ export class SceneManager {
     if (transition.type === "fade") {
       entry.instance.world.alpha = 0;
       await this.fade(transition, (p) => { entry.instance.world.alpha = p; });
+    } else {
+      entry.instance.world.alpha = 1;
     }
     return entry.instance;
   }
@@ -94,12 +96,19 @@ export class SceneManager {
     const instance = new Ctor(ctx);
     await instance.onPreload(this.host.loader, Ctor.assets);
     this.host.stage.addChild(instance.world);
-    instance.onCreate(opt.data);
-    const tick = (frame: FrameInfo): void => instance.onUpdate(frame.deltaTime);
-    this.host.ticker.add(tick);
-    this.ticks.set(instance, tick);
+    instance.world.alpha = 0;
+    try {
+      instance.onCreate(opt.data);
+      const tick = (frame: FrameInfo): void => instance.onUpdate(frame.deltaTime);
+      this.host.ticker.add(tick);
+      this.ticks.set(instance, tick);
+    } catch (error: unknown) {
+      instance.world.removeFromParent();
+      instance.world.destroy({ children: true });
+      throw error;
+    }
     const entry: SceneStackEntry = { key, data: opt.data, instance };
-    if (Ctor.Screen !== undefined) entry.Screen = Ctor.Screen;
+    if (Ctor.Screen) entry.Screen = Ctor.Screen;
     return entry;
   }
 
